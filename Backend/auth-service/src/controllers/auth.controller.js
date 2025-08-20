@@ -70,6 +70,7 @@ exports.refreshToken = async (req, res) => {
 };
 
 exports.register = async (req, res) => {
+
   try {
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);
 
@@ -81,6 +82,7 @@ exports.register = async (req, res) => {
     };
 
     const userServiceURL = process.env.USER_SERVICE_URL;
+    console.log("[AUTH-SERVICE] USER_SERVICE_URL:", userServiceURL);
 
     // Création du user côté user-service
     const { data: user } = await axios.post(

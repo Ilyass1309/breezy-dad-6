@@ -1,0 +1,46 @@
+@import "tailwindcss";
+@plugin "flyonui";
+@plugin "flyonui" {
+  themes: all;
+}
+@import "../../node_modules/flyonui/variants.css";
+@source "../../node_modules/flyonui/dist/index.js";
+@plugin "@iconify/tailwind4";
+
+@import "../../node_modules/flyonui/src/vendor/notyf.css";
+
+@font-face {
+  font-family: "Acme";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/acme/v26/RrQfboBx-C5_XxrBbg.woff2)
+    format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+body {
+  font-family: "Acme";
+}
+
+@plugin "flyonui/theme" {
+  name: "light";
+  --radius-selector: 2rem;
+  --radius-field: 2rem;
+  --radius-box: 2rem;
+}
+
+@plugin "flyonui/theme" {
+  name: "dark";
+  --radius-selector: 2rem;
+  --radius-field: 2rem;
+  --radius-box: 2rem;
+}
+
+.btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn:hover {
+  transform: scale(1.05);
+}

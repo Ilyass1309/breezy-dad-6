@@ -1,0 +1,175 @@
+{
+  "Index": {
+    "title": "欢迎",
+    "description": "这是主页"
+  },
+  "Auth": {
+    "title": "登录",
+    "loginTitle": "登录",
+    "registerTitle": "注册",
+    "loginDescription": "登录以访问您的账户",
+    "registerDescription": "创建账户以开始使用",
+    "identifier": "用户名或邮箱",
+    "identifierPlaceholder": "请输入用户名或邮箱",
+    "username": "用户名",
+    "usernamePlaceholder": "请输入用户名",
+    "usernameError": "用户名无效或已被占用",
+    "email": "邮箱",
+    "emailPlaceholder": "请输入邮箱",
+    "emailError": "邮箱地址无效",
+    "password": "密码",
+    "passwordLevel": "密码强度等级：",
+    "passwordLevels": ["空", "弱", "中", "强", "非常强", "极强"],
+    "passwordRequirements": "您的密码必须包含：",
+    "passwordRequirementsList": {
+      "min-length": "至少8个字符",
+      "lowercase": "至少一个小写字母",
+      "uppercase": "至少一个大写字母",
+      "numbers": "至少一个数字",
+      "special-characters": "至少一个特殊字符"
+    },
+    "passwordConfirmation": "确认密码",
+    "passwordsDoNotMatch": "两次输入的密码不一致",
+    "acceptTermsText": "我接受",
+    "acceptTermsLink": "隐私政策",
+    "rememberMe": "记住我",
+    "forgotPassword": "忘记密码？",
+    "loginButton": "登录",
+    "loginLoading": "正在登录...",
+    "registerButton": "注册",
+    "noAccount": "还没有账户？",
+    "alreadyHaveAccount": "已有账户？",
+    "createAccount": "创建账户",
+    "or": "或",
+    "loginWithGoogle": "使用谷歌登录",
+    "registerwithGoogle": "使用谷歌注册"
+  },
+  "Navbar": {
+    "title": "Breezy",
+    "home": "首页",
+    "profile": "个人资料",
+    "search": "搜索",
+    "breeze": "Breeze",
+    "notifications": "通知",
+    "messages": "消息",
+    "settings": "设置",
+    "theme": "主题",
+    "language": "语言",
+    "logout": "登出",
+    "bookmarks": "收藏"
+  },
+  "AppearanceSettings": {
+    "theme": "主题",
+    "lightTheme": "浅色主题",
+    "darkTheme": "深色主题",
+    "blackTheme": "黑色主题",
+    "systemTheme": "系统主题",
+    "language": "语言"
+  },
+  "Feed": {
+    "loading": "正在加载动态...",
+    "noPosts": "未找到帖子"
+  },
+  "profileCard": {
+    "userNotFound": "未找到用户",
+    "following": "关注",
+    "followers": "粉丝"
+  },
+  "Comment": {
+    "cancel": "取消",
+    "send": "发送",
+    "save": "保存",
+    "replyTo": "回复"
+  },
+  "CommentInput": {
+    "placeholder": "写评论...",
+    "addImage": "添加图片",
+    "addVideo": "添加视频",
+    "featureInDevelopment": "该功能正在开发中",
+    "addEmoji": "添加表情"
+  },
+  "CommmentsExpanded": {
+    "errorFetchComments": "获取评论时出错",
+    "noComments": "未找到评论",
+    "showMore": "显示更多"
+  },
+  "homepage": {
+    "forYou": "为你推荐",
+    "follow": "关注"
+  },
+  "searchPage": {
+    "searchLabel": "搜索用户、帖子或标签",
+    "searchPlaceholder": "搜索...",
+    "recentSearch": "最近搜索",
+    "resultfor": "结果：",
+    "loading": "正在加载...",
+    "noResults": "未找到结果"
+  },
+  "notificationspage": {
+    "title": "通知",
+    "all": "全部",
+    "mentions": "提及"
+  },
+  "Profile": {
+    "title": "个人资料",
+    "userNotFound": "未找到用户",
+    "editProfile": "编辑个人资料",
+    "changePassword": "更改密码",
+    "profilePicture": "头像",
+    "username": "用户名",
+    "email": "邮箱",
+    "bio": "简介",
+    "joined": "注册于",
+    "follower": "粉丝",
+    "followers": "粉丝",
+    "following": "关注",
+    "followings": "关注的人",
+    "status": {
+      "follow": "关注",
+      "following": "已关注",
+      "unfollow": "取消关注",
+      "friends": "好友"
+    }
+  },
+  "EditProfile": {
+    "title": "编辑个人资料",
+    "username": "用户名",
+    "usernamePlaceholder": "请输入用户名",
+    "usernameError": "用户名无效或已被占用",
+    "email": "邮箱",
+    "emailPlaceholder": "请输入邮箱",
+    "emailError": "邮箱地址无效",
+    "bio": "简介",
+    "bioPlaceholder": "用几句话介绍一下你自己",
+    "profilePicture": "头像",
+    "saveChanges": "保存",
+    "cancel": "取消"
+  },
+  "Messages": {
+    "title": "消息",
+    "noMessages": "未找到消息",
+    "newMessage": "新消息",
+    "searchPlaceholder": "搜索消息或用户",
+    "sendMessage": "发送消息",
+    "typeMessage": "在此输入你的消息...",
+    "send": "发送",
+    "loading": "正在加载消息..."
+  },
+  "Conversation": {
+    "title": "会话",
+    "messagePlaceholder": "输入消息..."
+  },
+  "NewMessagePage": {
+    "title": "新会话",
+    "description": "选择一个用户开始新的会话",
+    "noFriends": "未找到好友",
+    "error": "加载好友时出错"
+  },
+  "createbreathpage": {
+  "Cancel": "取消",
+  "Breath": "呼吸"
+  },
+  "Post": {
+    "loading": "正在加载..."
+  }
+}

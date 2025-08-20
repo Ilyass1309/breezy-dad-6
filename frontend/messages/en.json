@@ -1,0 +1,185 @@
+{
+  "Index": {
+    "title": "Welcome",
+    "description": "This is the homepage"
+  },
+  "Auth": {
+    "title": "Login",
+    "registerTitle": "Register",
+    "loginTitle": "Login",
+    "registerDescription": "Create an account to get started",
+    "loginDescription": "Log in to access your account",
+    "identifier": "Username or email",
+    "identifierPlaceholder": "Enter your username or email",
+    "username": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "usernameError": "Invalid/Already taken username",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "emailError": "Invalid email address",
+    "password": "Password",
+    "passwordLevel": "Password strength level:",
+    "passwordLevels": [
+      "Empty",
+      "Weak",
+      "Medium",
+      "Strong",
+      "Very strong",
+      "Ultra strong"
+    ],
+    "passwordRequirements": "Your password must contain:",
+    "passwordRecommendations": "Recommendations for a strong password:",
+    "passwordRequirementsList": {
+      "min-length": "At least 6 characters",
+      "lowercase": "At least one lowercase letter",
+      "uppercase": "At least one uppercase letter",
+      "numbers": "At least one number",
+      "special-characters": "At least one special character"
+    },
+    "passwordConfirmation": "Confirm password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "acceptTermsText": "I accept the",
+    "acceptTermsLink": "privacy policy",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "loginButton": "Log in",
+    "loginLoading": "Logging in...",
+    "registerButton": "Register",
+    "noAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "createAccount": "Create an account",
+    "or": "or",
+    "loginWithGoogle": "Log in with Google",
+    "registerwithGoogle": "Register with Google"
+  },
+  "Navbar": {
+    "title": "Breezy",
+    "home": "Home",
+    "profile": "Profile",
+    "search": "Search",
+    "breeze": "Breeze",
+    "notifications": "Notifications",
+    "messages": "Messages",
+    "settings": "Settings",
+    "theme": "Theme",
+    "language": "Language",
+    "css_components": "CSS Components",
+    "js_components": "JS Components",
+    "logout": "Log out",
+    "bookmarks": "Bookmarks"
+  },
+  "AppearanceSettings": {
+    "theme": "Theme",
+    "lightTheme": "Light theme",
+    "darkTheme": "Dark theme",
+    "blackTheme": "Black theme",
+    "systemTheme": "System theme",
+    "language": "Language"
+  },
+  "Feed": {
+    "loading": "Loading feed...",
+    "noPosts": "No posts found"
+  },
+  "profileCard": {
+    "userNotFound": "User not found",
+    "following": "Following",
+    "followers": "Followers"
+  },
+  "Comment": {
+    "cancel": "Cancel",
+    "send": "Send",
+    "save": "Save",
+    "replyTo": "Reply to"
+  },
+  "CommentInput": {
+    "placeholder": "Write a comment...",
+    "addImage": "Add image",
+    "addVideo": "Add video",
+    "featureInDevelopment": "This feature is in development",
+    "addEmoji": "Add emoji"
+  },
+  "CommmentsExpanded": {
+    "errorFetchComments": "Error fetching comments",
+    "noComments": "No comments found",
+    "showMore": "Show more"
+  },
+  "homepage": {
+    "forYou": "For you",
+    "follow": "Following"
+  },
+  "searchPage": {
+    "searchLabel": "Search for users, posts or hashtags",
+    "searchPlaceholder": "Search...",
+    "recentSearch": "Recent searches",
+    "resultfor": "Results for",
+    "loading": "Loading...",
+    "noResults": "No results found"
+  },
+  "notificationspage": {
+    "title": "title",
+    "all": "All",
+    "mentions": "Mentions"
+  },
+  "Profile": {
+    "title": "Profile",
+    "userNotFound": "User not found",
+    "editProfile": "Edit profile",
+    "changePassword": "Change password",
+    "profilePicture": "Profile picture",
+    "username": "Username",
+    "email": "Email",
+    "bio": "Bio",
+    "joined": "Joined",
+    "follower": "follower",
+    "followers": "followers",
+    "following": "following",
+    "followings": "followings",
+    "status": {
+      "follow": "Follow",
+      "following": "Following",
+      "unfollow": "Unfollow",
+      "friends": "Friends"
+    }
+  },
+  "EditProfile": {
+    "title": "Edit profile",
+    "username": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "usernameError": "Invalid/Already taken username",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "emailError": "Invalid email address",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell us about yourself in a few words",
+    "profilePicture": "Profile picture",
+    "saveChanges": "Save",
+    "cancel": "Cancel"
+  },
+  "Messages": {
+    "title": "Messages",
+    "noMessages": "No messages found",
+    "newMessage": "New message",
+    "searchPlaceholder": "Search messages or users",
+    "sendMessage": "Send message",
+    "typeMessage": "Type your message here...",
+    "send": "Send",
+    "loading": "Loading messages..."
+  },
+  "Conversation": {
+    "title": "Conversation",
+    "messagePlaceholder": "Type a message..."
+  },
+  "NewMessagePage": {
+    "title": "New conversation",
+    "description": "Select a user to start a new conversation",
+    "noFriends": "No friends found",
+    "error": "Error loading friends"
+  },
+  "Post": {
+    "loading": "Loading..."
+  },
+  "createbreathpage": {
+    "Cancel": "Cancel",
+    "Breath": "Breath"
+  }
+}

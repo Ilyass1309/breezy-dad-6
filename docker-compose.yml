@@ -1,0 +1,150 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: gateway
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+    ports:
+      - "8080:8080" #Nous exposerons sur le port 8080
+    networks:
+      - app-network
+    depends_on:
+      - auth-service
+      - post-service
+
+  mongo-user:
+    image: mongo
+    container_name: mongo-user
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-user-data:/data/db
+    networks:
+      - app-network
+
+  mongo-message:
+    image: mongo
+    container_name: mongo-message
+    restart: unless-stopped
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo-message-data:/data/db
+    networks:
+      - app-network
+
+  mongo-notification:
+    image: mongo
+    container_name: mongo-notification
+    restart: unless-stopped
+    ports:
+      - "27020:27017"
+    volumes:
+      - mongo-notification-data:/data/db
+    networks:
+      - app-network
+
+  notification-service:
+    build: ./Backend/notification-service
+    container_name: notification-service
+    restart: unless-stopped
+    ports:
+      - "3004:3004"
+    depends_on:
+      - mongo-notification
+    environment:
+      - MONGO_URI=mongodb://mongo-notification:27017/notification-db
+    networks:
+      - app-network
+
+  auth-service:
+    build: ./Backend/auth-service
+    container_name: auth-service
+    environment:
+      - USER_SERVICE_URL=http://user-service:3001
+      - ACCESS_JWT_KEY=dazhbdajbdjadakd
+      - REFRESH_TOKEN_SECRET=djendiebdeuibdeuidiue
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo-user
+      - user-service
+    networks:
+      - app-network
+    volumes:
+      - ./Backend/auth-service/logs:/home/logs/auth-service
+
+  mongo-post:
+    image: mongo
+    container_name: mongo-post
+    restart: unless-stopped
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-post-data:/data/db
+    depends_on:
+      - mongo-user
+      - auth-service
+    networks:
+      - app-network
+
+  post-service:
+    build: ./Backend/post-service
+    container_name: post-service
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+    depends_on:
+      - mongo-post
+    networks:
+      - app-network
+    volumes:
+      - ./Backend/post-service/logs:/home/logs/post-service
+
+  user-service:
+    build: ./Backend/user-service
+    container_name: user-service
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+    volumes:
+      - ./Backend/user-service/logs:/home/logs/user-service
+
+  message-service:
+    build: ./Backend/message-service
+    container_name: message-service
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongo-message
+    environment:
+      - MONGO_URI=mongodb://mongo-message:27017/messages-db
+    networks:
+      - app-network
+    volumes:
+      - ./Backend/message-service/logs:/home/logs/message-service
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - "80:3000"
+    networks:
+      - app-network
+
+volumes:
+  mongo-user-data:
+  mongo-post-data:
+  mongo-message-data:
+  mongo-notification-data:
+
+networks:
+  app-network:
+    driver: bridge

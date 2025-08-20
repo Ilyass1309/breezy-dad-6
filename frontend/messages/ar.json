@@ -1,0 +1,182 @@
+{
+  "Index": {
+    "title": "مرحبا بك",
+    "description": "هذه هي الصفحة الرئيسية"
+  },
+  "Auth": {
+    "title": "تسجيل الدخول",
+    "registerTitle": "إنشاء حساب",
+    "loginTitle": "تسجيل الدخول",
+    "registerDescription": "أنشئ حسابًا للبدء",
+    "loginDescription": "سجّل الدخول للوصول إلى حسابك",
+    "identifier": "اسم المستخدم أو البريد الإلكتروني",
+    "identifierPlaceholder": "أدخل اسم المستخدم أو البريد الإلكتروني",
+    "username": "اسم المستخدم",
+    "usernamePlaceholder": "أدخل اسم المستخدم",
+    "usernameError": "اسم مستخدم غير صالح أو مستخدم بالفعل",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "أدخل بريدك الإلكتروني",
+    "emailError": "بريد إلكتروني غير صالح",
+    "password": "كلمة المرور",
+    "passwordLevel": "مستوى قوة كلمة المرور:",
+    "passwordLevels": [
+      "فارغ",
+      "ضعيف",
+      "متوسط",
+      "قوي",
+      "قوي جدًا",
+      "قوي للغاية"
+    ],
+    "passwordRequirements": "يجب أن تحتوي كلمة المرور على:",
+    "passwordRequirementsList": {
+      "min-length": "ثمانية أحرف على الأقل",
+      "lowercase": "حرف صغير واحد على الأقل",
+      "uppercase": "حرف كبير واحد على الأقل",
+      "numbers": "رقم واحد على الأقل",
+      "special-characters": "رمز خاص واحد على الأقل"
+    },
+    "passwordConfirmation": "تأكيد كلمة المرور",
+    "passwordsDoNotMatch": "كلمتا المرور غير متطابقتين",
+    "acceptTermsText": "أوافق على",
+    "acceptTermsLink": "سياسة الخصوصية",
+    "rememberMe": "تذكرني",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "loginButton": "تسجيل الدخول",
+    "loginLoading": "جاري تسجيل الدخول…",
+    "registerButton": "إنشاء حساب",
+    "noAccount": "ليس لديك حساب؟",
+    "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
+    "createAccount": "إنشاء حساب",
+    "or": "أو",
+    "loginWithGoogle": "تسجيل الدخول باستخدام جوجل",
+    "registerwithGoogle": "إنشاء حساب باستخدام جوجل"
+  },
+  "Navbar": {
+    "title": "بريزي",
+    "home": "الرئيسية",
+    "profile": "الملف الشخصي",
+    "search": "بحث",
+    "breeze": "بريزي",
+    "notifications": "الإشعارات",
+    "messages": "الرسائل",
+    "settings": "الإعدادات",
+    "theme": "المظهر",
+    "language": "اللغة",
+    "logout": "تسجيل الخروج",
+    "bookmarks": "المفضلة"
+  },
+  "AppearanceSettings": {
+    "theme": "المظهر",
+    "lightTheme": "الوضع الفاتح",
+    "darkTheme": "الوضع الداكن",
+    "blackTheme": "الوضع الأسود",
+    "systemTheme": "وضع النظام",
+    "language": "اللغة"
+  },
+  "Feed": {
+    "loading": "جاري تحميل المنشورات...",
+    "noPosts": "لم يتم العثور على منشورات"
+  },
+  "profileCard": {
+    "userNotFound": "المستخدم غير موجود",
+    "following": "المتابَعون",
+    "followers": "المتابِعون"
+  },
+  "Comment": {
+    "cancel": "إلغاء",
+    "send": "إرسال",
+    "save": "حفظ",
+    "replyTo": "رد على"
+  },
+  "CommentInput": {
+    "placeholder": "اكتب تعليقًا...",
+    "addImage": "إضافة صورة",
+    "addVideo": "إضافة فيديو",
+    "featureInDevelopment": "هذه الميزة قيد التطوير",
+    "addEmoji": "إضافة رمز تعبيري"
+  },
+  "CommmentsExpanded": {
+    "errorFetchComments": "حدث خطأ أثناء جلب التعليقات",
+    "noComments": "لم يتم العثور على تعليقات",
+    "showMore": "عرض المزيد"
+  },
+  "homepage": {
+    "forYou": "لك",
+    "follow": "المتابَعون"
+  },
+  "searchPage": {
+    "searchLabel": "ابحث عن مستخدمين أو منشورات أو وسوم",
+    "searchPlaceholder": "بحث...",
+    "recentSearch": "عمليات البحث الأخيرة",
+    "resultfor": "النتائج لـ",
+    "loading": "جاري التحميل...",
+    "noResults": "لم يتم العثور على نتائج"
+  },
+  "notificationspage": {
+    "title": "الإشعارات",
+    "all": "الكل",
+    "mentions": "الإشارات"
+  },
+  "Profile": {
+    "title": "الملف الشخصي",
+    "userNotFound": "المستخدم غير موجود",
+    "editProfile": "تعديل الملف الشخصي",
+    "changePassword": "تغيير كلمة المرور",
+    "profilePicture": "صورة الملف الشخصي",
+    "username": "اسم المستخدم",
+    "email": "البريد الإلكتروني",
+    "bio": "نبذة",
+    "joined": "انضم منذ",
+    "follower": "متابع",
+    "followers": "متابعون",
+    "following": "يتابع",
+    "followings": "يتابعهم",
+    "status": {
+      "follow": "متابعة",
+      "following": "يتابع",
+      "unfollow": "إلغاء المتابعة",
+      "friends": "أصدقاء"
+    }
+  },
+  "EditProfile": {
+    "title": "تعديل الملف الشخصي",
+    "username": "اسم المستخدم",
+    "usernamePlaceholder": "أدخل اسم المستخدم",
+    "usernameError": "اسم مستخدم غير صالح/مستخدم بالفعل",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "أدخل بريدك الإلكتروني",
+    "emailError": "عنوان بريد إلكتروني غير صالح",
+    "bio": "نبذة",
+    "bioPlaceholder": "حدثنا عن نفسك ببضع كلمات",
+    "profilePicture": "صورة الملف الشخصي",
+    "saveChanges": "حفظ",
+    "cancel": "إلغاء"
+  },
+  "Messages": {
+    "title": "الرسائل",
+    "noMessages": "لم يتم العثور على رسائل",
+    "newMessage": "رسالة جديدة",
+    "searchPlaceholder": "ابحث عن الرسائل أو المستخدمين",
+    "sendMessage": "إرسال رسالة",
+    "typeMessage": "اكتب رسالتك هنا...",
+    "send": "إرسال",
+    "loading": "جاري تحميل الرسائل..."
+  },
+  "Conversation": {
+    "title": "المحادثة",
+    "messagePlaceholder": "اكتب رسالة..."
+  },
+  "NewMessagePage": {
+    "title": "محادثة جديدة",
+    "description": "اختر مستخدمًا لبدء محادثة جديدة",
+    "noFriends": "لم يتم العثور على أصدقاء",
+    "error": "حدث خطأ أثناء تحميل الأصدقاء"
+  },
+ "createbreathpage": {
+  "Cancel": "إلغاء",
+  "Breath": "نَفَس"
+  },
+  "Post": {
+    "loading": "جاري التحميل..."
+  }
+}

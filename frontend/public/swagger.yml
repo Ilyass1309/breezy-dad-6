@@ -1,0 +1,307 @@
+openapi: 3.0.3
+info:
+  title: Breezy API
+  description: API REST du réseau social Breezy
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/api
+    description: Serveur local de développement
+
+tags:
+  - name: Auth
+  - name: Users
+  - name: Posts
+  - name: Comments
+  - name: Follows
+  - name: Likes
+  - name: Media
+  - name: Notifications
+
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Inscription utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+      responses:
+        '201':
+          description: Utilisateur créé
+        '400':
+          description: Erreur de validation
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Connexion utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: Connexion réussie
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Profil utilisateur connecté
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profil utilisateur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    patch:
+      tags: [Users]
+      summary: Modifier son profil
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bio:
+                  type: string
+      responses:
+        '200':
+          description: Profil mis à jour
+
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Obtenir le profil d'un utilisateur
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Profil public utilisateur
+
+  /users/{id}/follow:
+    post:
+      tags: [Follows]
+      summary: Suivre un utilisateur
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Suivi effectué
+    delete:
+      tags: [Follows]
+      summary: Ne plus suivre un utilisateur
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: L'utilisateur n'est plus suivi
+
+  /posts:
+    get:
+      tags: [Posts]
+      summary: Liste des posts
+      responses:
+        '200':
+          description: Liste de posts
+    post:
+      tags: [Posts]
+      summary: Créer un post
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostInput'
+      responses:
+        '201':
+          description: Post créé
+
+  /posts/{id}:
+    delete:
+      tags: [Posts]
+      summary: Supprimer un post
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Supprimé
+
+  /posts/{id}/comments:
+    get:
+      tags: [Comments]
+      summary: Obtenir les commentaires d’un post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste de commentaires
+
+    post:
+      tags: [Comments]
+      summary: Commenter un post
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content:
+                  type: string
+      responses:
+        '201':
+          description: Commentaire publié
+
+  /upload/avatar:
+    post:
+      tags: [Media]
+      summary: Upload d’un avatar
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Image téléversée
+
+  /upload/post-media:
+    post:
+      tags: [Media]
+      summary: Upload d’un média de post
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Média associé au post
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    UserRegister:
+      type: object
+      required: [username, email, password]
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+
+    UserLogin:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        bio:
+          type: string
+        email:
+          type: string
+        avatarUrl:
+          type: string
+
+    PostInput:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+        mediaUrl:
+          type: string
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+        content:
+          type: string
+        mediaUrl:
+          type: string
+        createdAt:
+          type: string
+        author:
+          $ref: '#/components/schemas/User'
+        likesCount:
+          type: integer
+        commentsCount:
+          type: integer

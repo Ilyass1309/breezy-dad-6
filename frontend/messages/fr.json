@@ -1,0 +1,183 @@
+{
+  "Index": {
+    "title": "Bienvenue",
+    "description": "Ceci est la page d'accueil"
+  },
+  "Auth": {
+    "title": "Connexion",
+    "loginTitle": "Connexion",
+    "registerTitle": "Inscription",
+    "loginDescription": "Connectez-vous pour accéder à votre compte",
+    "registerDescription": "Créez un compte pour commencer",
+    "identifier": "Nom d'utilisateur ou email",
+    "identifierPlaceholder": "Entrez votre nom d'utilisateur ou email",
+    "username": "Nom d'utilisateur",
+    "usernamePlaceholder": "Entrez votre nom d'utilisateur",
+    "usernameError": "Nom d'utilisateur invalide/déjà pris",
+    "email": "Email",
+    "emailPlaceholder": "Entrez votre email",
+    "emailError": "Adresse email invalide",
+    "password": "Mot de passe",
+    "passwordLevel": "Niveau de sécurité du mot de passe :",
+    "passwordLevels": [
+      "Vide",
+      "Faible",
+      "Moyen",
+      "Fort",
+      "Très fort",
+      "Ultra fort"
+    ],
+    "passwordRequirements": "Votre mot de passe doit contenir :",
+    "passwordRecommendations": "Recommandations pour un mot de passe fort :",
+    "passwordRequirementsList": {
+      "min-length": "Au moins 6 caractères",
+      "lowercase": "Au moins une lettre minuscule",
+      "uppercase": "Au moins une lettre majuscule",
+      "numbers": "Au moins un chiffre",
+      "special-characters": "Au moins un caractère spécial"
+    },
+    "passwordConfirmation": "Confirmez le mot de passe",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "acceptTermsText": "J'accepte la",
+    "acceptTermsLink": "politique de confidentialité",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié ?",
+    "loginButton": "Se connecter",
+    "loginLoading": "Connexion en cours...",
+    "registerButton": "S'inscrire",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "createAccount": "Créer un compte",
+    "or": "ou",
+    "loginWithGoogle": "Se connecter avec Google",
+    "registerwithGoogle": "S'inscrire avec Google"
+  },
+  "Navbar": {
+    "title": "Breezy",
+    "home": "Accueil",
+    "profile": "Profil",
+    "search": "Rechercher",
+    "breeze": "Souffler",
+    "notifications": "Notifications",
+    "messages": "Messages",
+    "theme": "Thème",
+    "language": "Langue",
+    "logout": "Se déconnecter",
+    "bookmarks": "Favoris"
+  },
+  "AppearanceSettings": {
+    "theme": "Thème",
+    "lightTheme": "Thème clair",
+    "darkTheme": "Thème sombre",
+    "blackTheme": "Thème noir",
+    "systemTheme": "Thème système",
+    "language": "Langue"
+  },
+  "Profile": {
+    "title": "Profil",
+    "userNotFound": "Utilisateur non trouvé",
+    "editProfile": "Modifier le profil",
+    "changePassword": "Changer le mot de passe",
+    "profilePicture": "Photo de profil",
+    "username": "Nom d'utilisateur",
+    "email": "Email",
+    "bio": "Bio",
+    "joined": "Inscrit depuis",
+    "follower": "abonné",
+    "followers": "abonnés",
+    "following": "abonnement",
+    "followings": "abonnements",
+    "status": {
+      "follow": "Suivre",
+      "following": "Abonné",
+      "unfollow": "Se désabonner",
+      "friends": "Amis"
+    }
+  },
+  "EditProfile": {
+    "title": "Modifier le profil",
+    "username": "Nom d'utilisateur",
+    "usernamePlaceholder": "Entrez votre nom d'utilisateur",
+    "usernameError": "Nom d'utilisateur invalide/déjà pris",
+    "email": "Email",
+    "emailPlaceholder": "Entrez votre email",
+    "emailError": "Adresse email invalide",
+    "bio": "Bio",
+    "bioPlaceholder": "Parlez de vous en quelques mots",
+    "profilePicture": "Photo de profil",
+    "saveChanges": "Enregistrer",
+    "cancel": "Annuler"
+  },
+  "Messages": {
+    "title": "Messages",
+    "noMessages": "Aucun message trouvé",
+    "newMessage": "Nouveau message",
+    "searchPlaceholder": "Rechercher des messages ou des utilisateurs",
+    "sendMessage": "Envoyer un message",
+    "typeMessage": "Tapez votre message ici...",
+    "send": "Envoyer",
+    "loading": "Chargement des messages..."
+  },
+  "Feed": {
+    "loading": "Chargement du fil d'actualité...",
+    "noPosts": "Aucun post trouvé"
+  },
+  "profileCard": {
+    "userNotFound": "Utilisateur non trouvé",
+    "following": "Abonnements",
+    "followers": "Abonnés"
+  },
+  "Comment": {
+    "cancel": "Annuler",
+    "send": "Envoyer",
+    "save": "Enregistrer",
+    "replyTo": "Répondre à",
+    "reply": "Répondre"
+  },
+  "CommentInput": {
+    "placeholder": "Écrivez un commentaire...",
+    "addImage": "Ajouter une image",
+    "addVideo": "Ajouter une vidéo",
+    "featureInDevelopment": "Cette fonctionnalité est en cours de développement",
+    "addEmoji": "Ajouter un emoji"
+  },
+  "CommentExpander": {
+    "errorFetchComments": "Erreur lors de la récupération des commentaires",
+    "noComments": "Aucun commentaire trouvé",
+    "showMore": "Afficher plus"
+  },
+  "homepage": {
+    "forYou": "Pour vous",
+    "follow": "Suivis"
+  },
+  "searchPage": {
+    "searchLabel": "Rechercher des utilisateurs, des posts ou des hashtags",
+    "searchPlaceholder": "Rechercher...",
+    "recentSearch": "Recherches récentes",
+    "resultfor": "Résultats pour",
+    "loading": "Chargement...",
+    "noResults": "Aucun résultat trouvé"
+  },
+  "notificationspage": {
+    "title": "Notifications",
+    "all": "Toutes",
+    "mentions": "Mentions"
+  },
+  "Conversation": {
+    "title": "Conversation",
+    "messagePlaceholder": "Tapez un message..."
+  },
+  "NewMessagePage": {
+    "title": "Nouvelle conversation",
+    "description": "Sélectionnez un utilisateur pour commencer une nouvelle conversation",
+    "noFriends": "Aucun ami trouvé",
+    "error": "Erreur lors du chargement des amis"
+  },
+   "createbreathpage": {
+    "Cancel": "Annuler",
+    "Breath": "Souffle"
+    },
+  "Post": {
+    "loading": "Chargement..."
+  }
+}

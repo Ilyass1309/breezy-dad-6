@@ -17,7 +17,9 @@ const cors = require("cors");
 const corsOptions = require('./config/corsOptions');
 app.use(cors(corsOptions));
 
-require("./src/routes/auth.routes")(app);
+const authRoutes = require("./src/routes/auth.routes");
+app.use("/api/auth", authRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

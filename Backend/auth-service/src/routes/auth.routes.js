@@ -2,6 +2,21 @@ const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/auth.controller");
 
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ ok: true, service: "auth-service" });
+});
+
+app.get("/ready", (req, res) => {
+  const mongoState = mongoose.connection.readyState; // 1 = connecté
+  res.status(mongoState === 1 ? 200 : 503).json({
+    ok: mongoState === 1,
+    mongoState,
+    service: "auth-service",
+  });
+});
+
+
 /**
 * @swagger
 * /register:

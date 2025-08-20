@@ -1,19 +1,5 @@
 const mongoose = require("mongoose");
 
-// Health check
-router.get("/health", (req, res) => {
-	res.status(200).json({ ok: true, service: "auth-service" });
-});
-
-// Readiness check (avec état MongoDB)
-router.get("/ready", (req, res) => {
-	const mongoState = mongoose.connection.readyState; // 1 = connecté
-	res.status(mongoState === 1 ? 200 : 503).json({
-		ok: mongoState === 1,
-		mongoState,
-		service: "auth-service",
-	});
-});
 const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/auth.controller");
@@ -83,5 +69,11 @@ router.post("/login", authController.login);
 router.get("/auth/verify", authController.verifyToken);
 router.post("/auth/refresh-token", authController.refreshToken);
 router.post("/auth/logout", authController.logout);
+
+// Health check
+router.get("/health", authController.health);
+
+// Readiness check (avec état MongoDB)
+router.get("/ready", authController.ready);
 
 module.exports = router;

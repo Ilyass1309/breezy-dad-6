@@ -14,7 +14,7 @@ app.use(express.json());
 app.use("/api/notifications", notificationRoutes);
 
 mongoose
-  .connect("mongodb://mongo-notification:27017/notificationdb")
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("Connected to MongoDB for notification Service");
 

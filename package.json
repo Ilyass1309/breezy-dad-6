@@ -1,5 +1,28 @@
 {
+  "name": "breezy-api",
+  "version": "1.0.0",
+  "description": "Breezy API - Microservices Architecture",
+  "scripts": {
+    "start": "node server.js",
+    "start:auth": "cd Backend/auth-service && npm start",
+    "start:user": "cd Backend/user-service && npm start",
+    "start:post": "cd Backend/post-service && npm start",
+    "start:message": "cd Backend/message-service && npm start",
+    "start:notification": "cd Backend/notification-service && npm start",
+    "start:frontend": "cd frontend && npm start",
+    "dev": "node server.js",
+    "railway:auth": "cd Backend/auth-service && npm install && npm start",
+    "railway:user": "cd Backend/user-service && npm install && npm start",
+    "railway:post": "cd Backend/post-service && npm install && npm start",
+    "railway:message": "cd Backend/message-service && npm install && npm start",
+    "railway:notification": "cd Backend/notification-service && npm install && npm start",
+    "railway:frontend": "cd frontend && npm install && npm start"
+  },
   "dependencies": {
     "express": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }

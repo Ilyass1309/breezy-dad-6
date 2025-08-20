@@ -46,7 +46,7 @@ const port = 3002;
 
 // Démarrage du serveur
 mongoose
-  .connect("mongodb://mongo-message:27017/messagedb")
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("Connected to the database!");
 

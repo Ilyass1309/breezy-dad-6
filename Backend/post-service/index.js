@@ -16,7 +16,7 @@ app.use(logger);
 swaggerDocs(app, port);
 
 mongoose
-  .connect("mongodb://mongo-post:27017/postdb")
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("Connected to MongoDB for Post Service");
 

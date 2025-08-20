@@ -19,7 +19,7 @@ app.use("/api/users", userFollowRoutes);
 app.use("/api/friend-requests", friendRequestRoutes);
 
 mongoose
-  .connect("mongodb://mongo-user:27017/userdb")
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("Connected to the database!");
 

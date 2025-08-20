@@ -1,17 +1,18 @@
+
 services:
-  nginx:
-    image: nginx:latest
-    container_name: gateway
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./index.html:/usr/share/nginx/html/index.html:ro
-    ports:
-      - "8080:8080" 
-    networks:
-      - app-network
-    depends_on:
-      - auth-service
-      - post-service
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: gateway
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./index.html:/usr/share/nginx/html/index.html:ro
+  #   ports:
+  #     - "8080:8080" 
+  #   networks:
+  #     - app-network
+  #   depends_on:
+  #     - auth-service
+  #     - post-service
 
   auth-service:
     build: ./Backend/auth-service
@@ -20,11 +21,13 @@ services:
       - MONGODB_URI=${MONGODB_URI}
       - ACCESS_JWT_KEY=dazhbdajbdjadakd
       - REFRESH_TOKEN_SECRET=djendiebdeuibdeuidiue
+      - USER_SERVICE_URL=${USER_SERVICE_URL}
+      - MESSAGE_SERVICE_URL=${MESSAGE_SERVICE_URL}
+      - NOTIFICATION_SERVICE_URL=${NOTIFICATION_SERVICE_URL}
+      - POST_SERVICE_URL=${POST_SERVICE_URL}
     restart: unless-stopped
     ports:
       - "3000:3000"
-    depends_on:
-      - user-service
     networks:
       - app-network
     volumes:
@@ -35,6 +38,10 @@ services:
     container_name: post-service
     environment:
       - MONGODB_URI=${MONGODB_URI}
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - USER_SERVICE_URL=${USER_SERVICE_URL}
+      - MESSAGE_SERVICE_URL=${MESSAGE_SERVICE_URL}
+      - NOTIFICATION_SERVICE_URL=${NOTIFICATION_SERVICE_URL}
     restart: unless-stopped
     ports:
       - "3003:3003"
@@ -48,6 +55,10 @@ services:
     container_name: user-service
     environment:
       - MONGODB_URI=${MONGODB_URI}
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - POST_SERVICE_URL=${POST_SERVICE_URL}
+      - MESSAGE_SERVICE_URL=${MESSAGE_SERVICE_URL}
+      - NOTIFICATION_SERVICE_URL=${NOTIFICATION_SERVICE_URL}
     restart: unless-stopped
     ports:
       - "3001:3001"
@@ -61,6 +72,10 @@ services:
     container_name: message-service
     environment:
       - MONGODB_URI=${MONGODB_URI}
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - USER_SERVICE_URL=${USER_SERVICE_URL}
+      - POST_SERVICE_URL=${POST_SERVICE_URL}
+      - NOTIFICATION_SERVICE_URL=${NOTIFICATION_SERVICE_URL}
     restart: unless-stopped
     ports:
       - "3002:3002"

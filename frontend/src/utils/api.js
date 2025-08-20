@@ -1,8 +1,23 @@
-import axios from "axios";
-import avatar from "flyonui/components/avatar";
-import Cookies from "js-cookie";
-import { use } from "react";
+// =========================
+// api.js (front, Next.js)
+// =========================
 
+// --- URLs des microservices (vars d'env publiques côté Vercel) ---
+const AUTH_SERVICE_URL =
+  process.env.NEXT_PUBLIC_AUTH_SERVICE_URL || "https://breezy-dad-6.onrender.com";
+const USER_SERVICE_URL =
+  process.env.NEXT_PUBLIC_USER_SERVICE_URL || "https://user-service-82ui.onrender.com";
+const POST_SERVICE_URL =
+  process.env.NEXT_PUBLIC_POST_SERVICE_URL || "https://post-service-tmsc.onrender.com";
+const MESSAGE_SERVICE_URL =
+  process.env.NEXT_PUBLIC_MESSAGE_SERVICE_URL || "https://message-service-cpmd.onrender.com";
+const NOTIFICATION_SERVICE_URL =
+  process.env.NEXT_PUBLIC_NOTIFICATION_SERVICE_URL || "https://notification-service-mrpo.onrender.com";
+
+import axios from "axios";
+import Cookies from "js-cookie";
+
+// === Bindings pour propager le token & faire un logout global ===
 let setAccessTokenFromApi = null;
 export const bindAuthContext = (setAccessToken) => {
   setAccessTokenFromApi = setAccessToken;
@@ -13,369 +28,287 @@ export const bindLogout = (logout) => {
   logoutAPI = logout;
 };
 
-const config = {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
+// === Config commune ===
+const baseConfig = {
+  headers: { "Content-Type": "application/json" },
+  withCredentials: true, // utile si refreshToken httpOnly
+  timeout: 10000,
 };
 
-const apiClient = axios.create({
-  baseURL: "http://localhost:8080",
-  timeout: 5000,
-});
+// === Fabrique d'un client axios avec header Authorization auto ===
+const makeClient = (baseURL) => {
+  const client = axios.create({ baseURL, ...baseConfig });
 
-apiClient.interceptors.request.use(
-  (request) => {
-    const accessToken = Cookies.get("accessToken");
-    if (accessToken) {
-      request.headers["Authorization"] = `Bearer ${accessToken}`;
-    }
-    return request;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-apiClient.interceptors.response.use(
-  (response) => response, // Directly return successful responses.
-  async (error) => {
-    const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // Mark the request as retried to avoid infinite loops.
-      try {
-        // Make a request to your auth server to refresh the token.
-        const response = await apiClient.post(
-          "/auth/refresh-token",
-          {},
-          config
-        );
-        const { accessToken: newAccessToken } = response.data;
-
-        if (newAccessToken) {
-          setAccessTokenFromApi(newAccessToken);
-        }
-
-        // Update the authorization header with the new access token.
-        apiClient.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${newAccessToken}`;
-        return apiClient(originalRequest); // Retry the original request with the new access token.
-      } catch (refreshError) {
-        // Handle refresh token errors by clearing stored tokens and redirecting to the login page.
-        console.error("Token refresh failed:", refreshError);
-        logoutAPI();
-        window.location.href = "/";
-        return Promise.reject(refreshError);
-      }
-    }
-    return Promise.reject(error); // For all other errors, return the error as is.
-  }
-);
-
-// —————————————
-// Auth
-// —————————————
-
-// Inscription
-export async function registerUser(email, username, password) {
-  const { data } = await apiClient.post(
-    "/register",
-    {
-      email,
-      username,
-      password,
+  client.interceptors.request.use(
+    (req) => {
+      const accessToken = Cookies.get("accessToken");
+      if (accessToken) req.headers["Authorization"] = `Bearer ${accessToken}`;
+      return req;
     },
-    config
+    (err) => Promise.reject(err)
   );
+
+  return client;
+};
+
+// === Clients par service ===
+const authClient  = makeClient(AUTH_SERVICE_URL);
+const userClient  = makeClient(USER_SERVICE_URL);
+const postClient  = makeClient(POST_SERVICE_URL);
+const msgClient   = makeClient(MESSAGE_SERVICE_URL);
+const notifClient = makeClient(NOTIFICATION_SERVICE_URL);
+
+// === Intercepteur 401 → refresh sur auth-service ===
+const attachRefreshInterceptor = (client) => {
+  client.interceptors.response.use(
+    (res) => res,
+    async (error) => {
+      const original = error.config || {};
+      if (error.response?.status === 401 && !original._retry) {
+        original._retry = true;
+        try {
+          // Appel direct au service d'auth pour rafraîchir
+          const { data } = await authClient.post("/api/auth/refresh-token", {}, baseConfig);
+          const newAccessToken = data?.accessToken;
+
+          if (newAccessToken) {
+            setAccessTokenFromApi?.(newAccessToken);
+            original.headers = original.headers || {};
+            original.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          }
+          return client(original);
+        } catch (e) {
+          console.error("Token refresh failed:", e);
+          logoutAPI?.();
+          if (typeof window !== "undefined") window.location.href = "/";
+          return Promise.reject(e);
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
+};
+
+[authClient, userClient, postClient, msgClient, notifClient].forEach(attachRefreshInterceptor);
+
+// =====================
+//        AUTH
+// =====================
+
+export async function registerUser(email, username, password) {
+  const { data } = await authClient.post("/api/auth/register", { email, username, password });
   return data; // { msg, accessToken }
 }
 
-// Connexion
-export const loginUser = async (identifier, password) => {
-  try {
-    const response = await apiClient.post(
-      "/login",
-      {
-        identifier,
-        password,
-      },
-      config
-    );
-    return response.data;
-  } catch (error) {
-    //console.error("Erreur lors de la connexion :", error);
-    throw error;
-  }
-};
+export async function loginUser(identifier, password) {
+  const { data } = await authClient.post("/api/auth/login", { identifier, password });
+  return data; // { accessToken, ... }
+}
+
+// =====================
+//        USERS
+// =====================
 
 export async function fetchUserProfile(identifier) {
-  const res = await apiClient.get(`/api/users/${identifier}`);
+  const res = await userClient.get(`/api/users/${identifier}`);
   return res.data;
 }
 
 export async function fetchUserFollowing(userId) {
-  const res = await apiClient.get(`/api/users/${userId}/following`);
+  const res = await userClient.get(`/api/users/${userId}/following`);
   return res.data;
 }
 
 export async function fetchUserFollowers(userId) {
-  const res = await apiClient.get(`/api/users/${userId}/followers`);
+  const res = await userClient.get(`/api/users/${userId}/followers`);
   return res.data;
 }
 
 export async function fetchUserFriends(userId, token) {
-  const res = await apiClient.get(`/api/users/${userId}/friends`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const res = await userClient.get(`/api/users/${userId}/friends`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 }
 
-export async function fetchUserPosts(userId, token) {
-  const res = await apiClient.get(`/api/posts/byuser/${userId}`);
+export async function fetchUsersByUsername(query) {
+  const res = await userClient.get(`/api/users/search`, { params: { query } });
   return res.data;
 }
 
-export async function fetchUserFeed(token) {
-  const res = await apiClient.get(`/api/posts/feed`);
+export async function followUser(targetUserId) {
+  const res = await userClient.post(`/api/friend-requests/follow/${targetUserId}`, {});
   return res.data;
 }
 
-export async function fetchFYP() {
-  const res = await apiClient.get(`/api/posts/fyp`);
-  return res.data;
-}
-
-export async function followUser(targetUserId, token) {
-  const res = await apiClient.post(
-    `api/friend-requests/follow/${targetUserId}`,
-    {}
-  );
-  return res.data;
-}
-
-export async function unfollowUser(targetUserId, token) {
-  const res = await apiClient.post(
-    `api/friend-requests/unfollow/${targetUserId}`,
-    {}
-  );
-  return res.data;
-}
-export async function postBreeze(text, tags, image, token) {
-  const res = await apiClient.post("/api/posts/", {
-    content: text,
-    tags: tags,
-    image: image,
-  });
-  return res.data;
-}
-
-export async function likeBreeze(setLiked, postID, token) {
-  const res = await apiClient.post(
-    setLiked
-      ? "/api/posts/likes/posts/" + postID + "/like"
-      : "/api/posts/likes/posts/" + postID + "/unlike",
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  return res.data;
-}
-
-export async function fetchTaggedPosts(tag, token) {
-  const res = await apiClient.get(`/api/posts/search/popular?tag=${tag}`);
-  return res.data;
-}
-
-export async function fetchPost(postId, token) {
-  const res = await apiClient.get(`/api/posts/${postId}`);
-  return res.data;
-}
-
-export async function fetchUsersByUsername(query, token) {
-  const res = await apiClient.get(`/api/users/search?query=${query}`);
-  return res.data;
-}
-
-export async function fetchUserMessages(token) {
-  const res = await apiClient.get("/messages/inbox");
-  return res.data;
-}
-
-export async function fetchMessageById(messageId, token) {
-  const res = await apiClient.get(`/messages/${messageId}`);
-  return res.data;
-}
-
-export async function fetchPostComments(postId, token) {
-  const res = await apiClient.get(`/api/posts/${postId}/comments`);
-  return res.data;
-}
-
-export async function addCommentToPost(postId, comment_content, token) {
-  const res = await apiClient.post(`/api/posts/${postId}/comments`, {
-    content: comment_content,
-  });
-  return res;
-}
-
-export async function updateComment(postId, commentId, new_content, token) {
-  const res = await apiClient.put(
-    `/api/posts/${postId}/comments/${commentId}`,
-    {
-      content: new_content,
-    }
-  );
-  return res;
-}
-
-export async function deleteComment(postId, commentId, token) {
-  const res = await apiClient.delete(
-    `/api/posts/${postId}/comments/${commentId}`
-  );
-  return res;
-}
-
-export async function getCommentReplies(postId, commentId, token) {
-  const res = await apiClient.get(
-    `/api/posts/${postId}/comments/${commentId}/replies`
-  );
-  return res.data;
-}
-
-export async function getCommentRepliesCount(postId, commentId, token) {
-  const res = await apiClient.get(
-    `/api/posts/${postId}/comments/${commentId}/repliesCount`
-  );
-  return res;
-}
-
-export async function addReplyToComment(
-  postId,
-  commentId,
-  reply_content,
-  reply_username,
-  token
-) {
-  const res = await apiClient.post(
-    `/api/posts/${postId}/comments/${commentId}/replies`,
-    {
-      content: reply_content,
-      replyUsername: reply_username,
-    }
-  );
-  return res;
-}
-
-export async function likeComment(commentId, token) {
-  const res = await apiClient.post(
-    `/api/posts/likes/comments/${commentId}/like`,
-    {}
-  );
-  return res.data;
-}
-
-export async function unlikeComment(commentId, token) {
-  const res = await apiClient.post(
-    `/api/posts/likes/comments/${commentId}/unlike`,
-    {}
-  );
-  return res.data;
-}
-
-export async function sendMessage(receiverId, content, token) {
-  const res = await apiClient.post("/messages/send", {
-    receiver: receiverId,
-    content: content,
-  });
-  return res.data;
-}
-
-export async function getConversations(userId, token) {
-  const res = await apiClient.get(`/messages/conversations/${userId}`);
-  return res.data;
-}
-
-export async function deleteMessage(messageId, token) {
-  const res = await apiClient.delete(`/messages/${messageId}`);
-  return res.data;
-}
-
-export async function editMessage(messageId, content, token) {
-  const res = await apiClient.patch(`/messages/${messageId}`, {
-    content: content,
-  });
+export async function unfollowUser(targetUserId) {
+  const res = await userClient.post(`/api/friend-requests/unfollow/${targetUserId}`, {});
   return res.data;
 }
 
 export async function updateUserProfile(bio, avatar, token) {
-  const res = await apiClient.patch(
+  const res = await userClient.patch(
     `/api/users/`,
-    {
-      bio,
-      avatar,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+    { bio, avatar },
+    { headers: { Authorization: `Bearer ${token}` } }
   );
   return res.data;
 }
 
+// =====================
+//        POSTS
+// =====================
+
+export async function fetchUserPosts(userId) {
+  const res = await postClient.get(`/api/posts/byuser/${userId}`);
+  return res.data;
+}
+
+export async function fetchUserFeed() {
+  const res = await postClient.get(`/api/posts/feed`);
+  return res.data;
+}
+
+export async function fetchFYP() {
+  const res = await postClient.get(`/api/posts/fyp`);
+  return res.data;
+}
+
+export async function postBreeze(text, tags, image) {
+  const res = await postClient.post(`/api/posts/`, { content: text, tags, image });
+  return res.data;
+}
+
+export async function likeBreeze(setLiked, postID, token) {
+  const path = setLiked
+    ? `/api/posts/likes/posts/${postID}/like`
+    : `/api/posts/likes/posts/${postID}/unlike`;
+  const res = await postClient.post(path, {}, { headers: { Authorization: `Bearer ${token}` } });
+  return res.data;
+}
+
+export async function fetchTaggedPosts(tag) {
+  const res = await postClient.get(`/api/posts/search/popular`, { params: { tag } });
+  return res.data;
+}
+
+export async function fetchPost(postId) {
+  const res = await postClient.get(`/api/posts/${postId}`);
+  return res.data;
+}
+
+export async function fetchPostComments(postId) {
+  const res = await postClient.get(`/api/posts/${postId}/comments`);
+  return res.data;
+}
+
+export async function addCommentToPost(postId, comment_content) {
+  const res = await postClient.post(`/api/posts/${postId}/comments`, { content: comment_content });
+  return res;
+}
+
+export async function updateComment(postId, commentId, new_content) {
+  const res = await postClient.put(`/api/posts/${postId}/comments/${commentId}`, { content: new_content });
+  return res;
+}
+
+export async function deleteComment(postId, commentId) {
+  const res = await postClient.delete(`/api/posts/${postId}/comments/${commentId}`);
+  return res;
+}
+
+export async function getCommentReplies(postId, commentId) {
+  const res = await postClient.get(`/api/posts/${postId}/comments/${commentId}/replies`);
+  return res.data;
+}
+
+export async function getCommentRepliesCount(postId, commentId) {
+  const res = await postClient.get(`/api/posts/${postId}/comments/${commentId}/repliesCount`);
+  return res;
+}
+
+export async function likeComment(commentId) {
+  const res = await postClient.post(`/api/posts/likes/comments/${commentId}/like`, {});
+  return res.data;
+}
+
+export async function unlikeComment(commentId) {
+  const res = await postClient.post(`/api/posts/likes/comments/${commentId}/unlike`, {});
+  return res.data;
+}
+
+// =====================
+//      MESSAGES
+// =====================
+
+export async function fetchUserMessages() {
+  const res = await msgClient.get(`/api/messages/inbox`);
+  return res.data;
+}
+
+export async function fetchMessageById(messageId) {
+  const res = await msgClient.get(`/api/messages/${messageId}`);
+  return res.data;
+}
+
+export async function sendMessage(receiverId, content) {
+  const res = await msgClient.post(`/api/messages/send`, { receiver: receiverId, content });
+  return res.data;
+}
+
+export async function getConversations(userId) {
+  const res = await msgClient.get(`/api/messages/conversations/${userId}`);
+  return res.data;
+}
+
+export async function deleteMessage(messageId) {
+  const res = await msgClient.delete(`/api/messages/${messageId}`);
+  return res.data;
+}
+
+export async function editMessage(messageId, content) {
+  const res = await msgClient.patch(`/api/messages/${messageId}`, { content });
+  return res.data;
+}
+
+export async function markConversationAsRead(userId, token) {
+  return msgClient.post(
+    `/api/messages/conversations/${userId}/read`,
+    {},
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+}
+
+// =====================
+//   NOTIFICATIONS
+// =====================
+
 export async function fetchNotifications(token) {
-  const res = await apiClient.get("/api/notifications", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const res = await notifClient.get(`/api/notifications`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 }
 
 export async function getNotificationCount(token) {
-  const res = await apiClient.get("/api/notifications/count", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const res = await notifClient.get(`/api/notifications/count`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 }
 
 export async function readAndUpdateNotification(notificationId, token) {
-  const res = await apiClient.patch(
+  const res = await notifClient.patch(
     `/api/notifications/${notificationId}`,
     {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+    { headers: { Authorization: `Bearer ${token}` } }
   );
   return res.data;
 }
 
 export async function readAndDeleteNotification(notificationId, token) {
-  const res = await apiClient.delete(`/api/notifications/${notificationId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const res = await notifClient.delete(`/api/notifications/${notificationId}`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
-}
-
-export async function markConversationAsRead(userId, token) {
-  return apiClient.post(
-    `/messages/conversations/${userId}/read`,
-    {},
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
 }

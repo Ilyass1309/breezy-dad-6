@@ -1,3 +1,18 @@
+// Health check
+exports.health = (req, res) => {
+  res.status(200).json({ ok: true, service: "auth-service" });
+};
+
+// Readiness check (avec état MongoDB)
+const mongoose = require("mongoose");
+exports.ready = (req, res) => {
+  const mongoState = mongoose.connection.readyState; // 1 = connecté
+  res.status(mongoState === 1 ? 200 : 503).json({
+    ok: mongoState === 1,
+    mongoState,
+    service: "auth-service",
+  });
+};
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const axios = require("axios");

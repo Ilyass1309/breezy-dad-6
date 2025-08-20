@@ -103,7 +103,7 @@ exports.register = async (req, res) => {
     const { data: user } = await axios.post(
       `${userServiceURL}/api/users`,
       userPayload,
-      { timeout: 3000 }
+      { timeout: 15000 }
     );
 
     // Génération de tokens

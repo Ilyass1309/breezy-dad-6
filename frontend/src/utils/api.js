@@ -32,7 +32,7 @@ export const bindLogout = (logout) => {
 const baseConfig = {
   headers: { "Content-Type": "application/json" },
   withCredentials: true, // utile si refreshToken httpOnly
-  timeout: 10000,
+  timeout: 25000,
 };
 
 // === Fabrique d'un client axios avec header Authorization auto ===

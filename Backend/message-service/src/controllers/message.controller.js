@@ -16,12 +16,15 @@ exports.sendMessage = async (req, res) => {
     await message.save();
 
     // Appel au service de notification
-    await axios.post("http://notification-service:3004/api/notifications", {
-      userId: receiver,
-      type: "message",
-      content: `You received a new message.`,
-      link: `/messages/${sender}`,
-    });
+    const notifServiceUrl = process.env.NOTIFICATION_SERVICE_URL;
+    await axios.post(
+      `${notifServiceUrl.replace(/\/$/, '')}/api/notifications`, {
+        userId: receiver,
+        type: "message",
+        content: `You received a new message.`,
+        link: `/messages/${sender}`,
+      }
+    );
 
     // Récupération de l'instance de Socket.IO
     const io = req.app.get("io");

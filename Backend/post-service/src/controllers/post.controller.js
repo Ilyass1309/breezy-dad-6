@@ -85,8 +85,9 @@ module.exports = {
 
       // Appel au notification-service
       try {
+        const notifServiceUrl = process.env.NOTIFICATION_SERVICE_URL;
         await axios.post(
-          "http://notification-service:3004/api/notifications/on-post-created",
+          `${notifServiceUrl.replace(/\/$/, '')}/api/notifications/on-post-created`,
           {
             userId: user_id, // L'utilisateur qui a créé le post
             postId: savedPost._id,

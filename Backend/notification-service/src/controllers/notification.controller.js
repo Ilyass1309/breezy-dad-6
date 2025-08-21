@@ -108,8 +108,9 @@ exports.onPostCreated = async (req, res) => {
 
   try {
     // Récupérer les followers depuis le user-service
+    const userServiceUrl = process.env.USER_SERVICE_URL;
     const response = await axios.get(
-      `http://user-service:3001/api/users/${userId}/followers`
+      `${userServiceUrl.replace(/\/$/, '')}/api/users/${userId}/followers`
     );
     const followers = response.data.followers;
 

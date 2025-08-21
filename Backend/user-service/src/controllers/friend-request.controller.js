@@ -42,12 +42,15 @@ exports.followUser = async (req, res) => {
         // Crée une notification via notification-service
         try {
             console.log('📡 [followUser] Sending notification to notification-service...');
-            const notifResponse = await axios.post('http://notification-service:3004/api/notifications', {
-                userId: targetId,
-                type: 'follow',
-                content: `${follower.username} is now following you.`,
-                link: `/profile/${followerId}`
-            });
+            const notifServiceUrl = process.env.NOTIFICATION_SERVICE_URL;
+            const notifResponse = await axios.post(
+                `${notifServiceUrl.replace(/\/$/, '')}/api/notifications`, {
+                    userId: targetId,
+                    type: 'follow',
+                    content: `${follower.username} is now following you.`,
+                    link: `/profile/${followerId}`
+                }
+            );
             console.log('✅ [followUser] Notification response:', notifResponse.data);
         } catch (notifyErr) {
             console.error('❌ [followUser] Failed to send follow notification:', notifyErr.message);

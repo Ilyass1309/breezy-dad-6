@@ -1,7 +1,9 @@
+
 const Comment = require("../models/Comment.js");
 const Post = require("../models/Post.js");
 const mongoose = require("mongoose");
 const axios = require("axios");
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 
 module.exports = {
   getPostComments: async (req, res) => {
@@ -20,13 +22,7 @@ module.exports = {
         .lean()
         .exec();
 
-      if (postComments?.length === 0) {
-        return res
-          .status(200)
-          .json({ message: "No comments found for this post" });
-      }
-
-      return res.status(200).json(postComments);
+  return res.status(200).json(Array.isArray(postComments) ? postComments : []);
     } catch (error) {
       console.error("Error retrieving comments:", error);
       return res
@@ -65,8 +61,9 @@ module.exports = {
       // Crée une notification pour l'auteur du post si ce n'est pas lui qui commente
       if (post.author.toString() !== author) {
         try {
+          const notifServiceUrl = process.env.NOTIFICATION_SERVICE_URL;
           await axios.post(
-            "http://notification-service:3004/api/notifications",
+            `${notifServiceUrl.replace(/\/$/, '')}/api/notifications`,
             {
               userId: post.author,
               type: "comment_post",
@@ -238,8 +235,9 @@ module.exports = {
       if (parentComment.author.toString() !== author) {
         // éviter l'auto-notif
         try {
+          const notifServiceUrl = process.env.NOTIFICATION_SERVICE_URL;
           await axios.post(
-            "http://notification-service:3004/api/notifications",
+            `${notifServiceUrl.replace(/\/$/, '')}/api/notifications`,
             {
               userId: parentComment.author,
               type: "comment_reply",

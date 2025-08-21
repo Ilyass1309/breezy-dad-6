@@ -1,5 +1,7 @@
 
+
 const axios = require('axios');
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 
 const verifyJWT = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -12,7 +14,10 @@ const verifyJWT = async (req, res, next) => {
   }
 
   try {
-    const response = await axios.get('http://auth-service:3000/auth/verify', {
+
+    const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://auth-service:3000';
+    const verifyUrl = authServiceUrl.replace(/\/$/, '') + '/auth/verify';
+    const response = await axios.get(verifyUrl, {
       headers: { Authorization: authHeader },
     });
 

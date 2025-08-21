@@ -9,12 +9,10 @@ const logEvents = async (message, logFileName) => {
     const logItem = `${dateTime}\t${uuid()}\t${message}\n`;
     
     try {
-        if (!fs.existsSync(path.join('/home', 'logs', 'auth-service'))) {
-            await fsPromises.mkdir(path.join('/home', 'logs', 'auth-service'));
-        }
+        await fsPromises.mkdir(path.join('/home', 'logs', 'auth-service'), { recursive: true });
         await fsPromises.appendFile(path.join('/home', 'logs', 'auth-service', logFileName), logItem);
     } catch (err) {
-        console.error(err);
+        console.error('[logger] Error writing log:', err.message);
     }
 }
 

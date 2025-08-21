@@ -66,9 +66,9 @@ router.post("/register", authController.register);
 *     description: Unauthorized, invalid credentials
 */
 router.post("/login", authController.login);
-router.get("/auth/verify", authController.verifyToken);
-router.post("/auth/refresh-token", authController.refreshToken);
-router.post("/auth/logout", authController.logout);
+router.get("/verify", authController.verifyToken);
+router.post("/refresh-token", authController.refreshToken);
+router.post("/logout", authController.logout);
 
 // Health check
 router.get("/health", authController.health);

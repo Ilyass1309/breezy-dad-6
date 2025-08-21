@@ -25,7 +25,7 @@ app.use(express.json());
 app.set("io", io);
 
 // Routes REST
-app.use("/messages", messageRoutes);
+app.use("/api/messages", messageRoutes);
 
 // Connexion WebSocket
 io.on("connection", (socket) => {

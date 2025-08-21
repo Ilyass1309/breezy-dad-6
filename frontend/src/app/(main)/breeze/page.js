@@ -8,7 +8,7 @@ import { postBreeze, fetchUserProfile } from "@/utils/api";
 async function uploadPostImage(file) {
   const formData = new FormData();
   formData.append("file", file);
-  const res = await fetch(process.env.POST_SERVICE_URL + "/api/upload/upload_post_image", {
+  const res = await fetch("https://post-service-tmsc.onrender.com/api/upload/upload_post_image", {
     method: "POST",
     body: formData,
   });

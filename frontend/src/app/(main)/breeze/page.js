@@ -8,12 +8,19 @@ import { postBreeze, fetchUserProfile } from "@/utils/api";
 async function uploadPostImage(file) {
   const formData = new FormData();
   formData.append("file", file);
+  console.log("[FRONT] Tentative d'upload image:", file);
   const res = await fetch("https://post-service-tmsc.onrender.com/api/upload/upload_post_image", {
     method: "POST",
     body: formData,
   });
-  if (!res.ok) throw new Error("Erreur upload image");
+  console.log("[FRONT] Réponse upload:", res.status, res.statusText);
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error("[FRONT] Erreur upload:", errText);
+    throw new Error("Erreur upload image: " + errText);
+  }
   const data = await res.json();
+  console.log("[FRONT] Data Cloudinary:", data);
   return data.url;
 }
 import UserAvatar from "@/components/UserAvatar";

@@ -1,6 +1,8 @@
+
 const Post = require("../models/Post.js");
 const mongoose = require("mongoose");
 const axios = require("axios");
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 
 module.exports = {
   getPostsByUserId: async (req, res) => {
@@ -36,8 +38,9 @@ module.exports = {
         return res.status(400).json({ message: "User id is required" });
       }
 
+      const userServiceUrl = process.env.USER_SERVICE_URL;
       const response = await axios.get(
-        `http://gateway:8080/api/users/${user_id}/following`
+        `${userServiceUrl.replace(/\/$/, '')}/api/users/${user_id}/following`
       );
       const friends_ids = response.data.following;
 
@@ -297,8 +300,9 @@ module.exports = {
       // Récupère les abonnements de l'utilisateur
       let followingIds = [];
       try {
+        const userServiceUrl = process.env.USER_SERVICE_URL;
         const response = await axios.get(
-          `http://gateway:8080/api/users/${user_id}/following`
+          `${userServiceUrl.replace(/\/$/, '')}/api/users/${user_id}/following`
         );
         followingIds = response.data.following || [];
       } catch (err) {

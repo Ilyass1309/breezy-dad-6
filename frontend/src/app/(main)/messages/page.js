@@ -114,7 +114,7 @@ export default function MessagesPage() {
             <li className="p-4 text-base-content/80">{t("noMessages")}</li>
           )}
           {!loading &&
-            conversations.map((conv) => (
+            conversations.filter(conv => conv && conv.id).map((conv) => (
               <li
                 key={conv.id}
                 className={`p-4 flex items-center bg-base-100 hover:bg-primary/50 active:bg-primary/80 focus:bg-primary/50 touch-active:bg-primary/50 ${

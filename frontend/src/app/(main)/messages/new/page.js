@@ -70,7 +70,7 @@ export default function NewMessagePage() {
           <li className="p-4 text-gray-500">{t("noFriends")}</li>
         )}
         {!loading &&
-          friends.map((friend) => (
+          friends.filter(friend => friend && friend.id).map((friend) => (
             <li
               key={friend.id}
               className={`p-4 flex items-center bg-base-100 hover:bg-primary/50 active:bg-primary/80 focus:bg-primary/50 touch-active:bg-primary/50`}

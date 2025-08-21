@@ -3,12 +3,11 @@ import { updateUserProfile } from "../utils/api";
 import { useAuth } from "@/contexts/authcontext";
 import { useState } from "react";
 
-export default function EditProfile({ open, onClose }) {
-  const { user, token } = useAuth();
+  const { user, accessToken, setUser } = useAuth();
   const t = useTranslations("EditProfile");
   const [uploading, setUploading] = useState(false);
-  const [bio, setBio] = useState(user.bio || "");
-  const [avatar, setAvatar] = useState(user.avatar || "");
+  const [bio, setBio] = useState(user?.bio || "");
+  const [avatar, setAvatar] = useState(user?.avatar || "");
   const handleAvatar = async (e) => {
     const image = e.target.files[0];
 
@@ -31,14 +30,15 @@ export default function EditProfile({ open, onClose }) {
     if (!bio && !avatar) {
       return;
     }
-
     try {
-      await updateUserProfile(bio, avatar, token);
-      // refresh page
-      window.location.reload();
+      const res = await updateUserProfile(bio, avatar, accessToken);
+      if (res && res.user) {
+        setUser(res.user); // met à jour le contexte utilisateur
+      }
+      onClose(); // ferme la modale
     } catch (error) {
       console.error("Failed to update profile:", error);
-      // Handle error (e.g., show an error message)
+      // Gérer l'erreur (affichage, etc.)
     }
   };
   return (
@@ -102,7 +102,7 @@ export default function EditProfile({ open, onClose }) {
                   className="input input-bordered"
                   name="username"
                   disabled={true}
-                  defaultValue={user.username}
+                  defaultValue={user?.username || ""}
                 />
               </div>
               <div className="form-control">

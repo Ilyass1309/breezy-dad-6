@@ -18,29 +18,38 @@ exports.ready = (req, res) => {
 };
 
 exports.refreshToken = async (req, res) => {
+  console.log("[REFRESH] Début refreshToken");
   const oldRefreshToken = req.cookies.refreshToken;
+  console.log("[REFRESH] Cookie refreshToken reçu:", oldRefreshToken);
 
   if (!oldRefreshToken) {
+    console.log("[REFRESH] Aucun refreshToken trouvé dans les cookies");
     return res.status(400).json({ message: "Refresh token is required" });
   }
 
   try {
     const userServiceURL = process.env.USER_SERVICE_URL;
+    console.log("[REFRESH] USER_SERVICE_URL:", userServiceURL);
 
     const decoded = jwt.verify(
       oldRefreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
+    console.log("[REFRESH] RefreshToken décodé:", decoded);
 
     const username = decoded.userInfo.username;
     const userId = decoded.userInfo.userId;
+    console.log("[REFRESH] username:", username, "userId:", userId);
 
     // 1. Vérifie l'ancien refreshToken
+    console.log("[REFRESH] Vérification existence utilisateur côté user-service");
     const userExists = await axios.get(
       `${userServiceURL}/api/users/check-username?username=${username}`
     );
+    console.log("[REFRESH] Résultat userExists:", userExists.data);
 
     if (userExists == false) {
+      console.log("[REFRESH] Utilisateur non trouvé dans user-service");
       return res.status(401).json({ message: "Unauthorized" });
     }
 
@@ -48,6 +57,7 @@ exports.refreshToken = async (req, res) => {
     const newAccessToken = jwt.sign({ userId }, process.env.ACCESS_JWT_KEY, {
       expiresIn: "15m",
     });
+    console.log("[REFRESH] Nouveau accessToken généré");
 
     // 3. Génère un nouveau refreshToken (rotation)
     const newRefreshToken = jwt.sign(
@@ -60,11 +70,14 @@ exports.refreshToken = async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "1d" }
     );
+    console.log("[REFRESH] Nouveau refreshToken généré");
 
     // 4. Remplace dans la base (remplace l'ancien)
+    console.log("[REFRESH] Stockage du nouveau refreshToken côté user-service");
     await axios.post(`${userServiceURL}/api/users/${userId}/refreshTokens`, {
       refreshToken: newRefreshToken,
     });
+    console.log("[REFRESH] Nouveau refreshToken stocké côté user-service");
 
     // 5. Met à jour le cookie
     res.cookie("refreshToken", newRefreshToken, {
@@ -73,11 +86,13 @@ exports.refreshToken = async (req, res) => {
       sameSite: "Strict",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
     });
+    console.log("[REFRESH] Cookie refreshToken mis à jour");
 
     // 6. Réponse au client
+    console.log("[REFRESH] Fin refreshToken - succès");
     return res.status(200).json({ accessToken: newAccessToken });
   } catch (err) {
-    console.error("Refresh token error:", err.message);
+    console.error("[REFRESH] Erreur:", err.message);
     return res
       .status(403)
       .json({ message: "Invalid or expired refresh token" });

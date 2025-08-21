@@ -29,6 +29,7 @@ mongoose
       "/api/posts/likes",
       require("./src/routes/like.routes.js")
     );
+    app.use("/api/upload", require("./src/routes/upload.routes.js"));
 
     app.listen(port, () => {
       console.log("Post Service is running on port", port);

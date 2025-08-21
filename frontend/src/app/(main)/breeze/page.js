@@ -3,6 +3,19 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { postBreeze, fetchUserProfile } from "@/utils/api";
+
+// Fonction utilitaire pour uploader une image de post
+async function uploadPostImage(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await fetch(process.env.NEXT_PUBLIC_POST_SERVICE_URL + "/api/upload/upload_post_image", {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) throw new Error("Erreur upload image");
+  const data = await res.json();
+  return data.url;
+}
 import UserAvatar from "@/components/UserAvatar";
 import { useAuth } from "@/contexts/authcontext";
 import { useTranslations } from "next-intl";
@@ -13,6 +26,8 @@ export default function CreateBreathPage() {
   const router = useRouter();
   const [text, setText] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [tags, setTags] = useState([]); // Ajout état pour les tags
   const fileInputRef = useRef(null);
   const { user, accessToken } = useAuth();
@@ -31,13 +46,29 @@ export default function CreateBreathPage() {
   const handleCancel = () => router.back();
 
   // Soumettre le “breath”
-  const handleSubmit = () => {
-    postBreeze(text, tags, selectedImage, accessToken)
+  const handleSubmit = async () => {
+    let finalImageUrl = imageUrl;
+    if (selectedImage && !imageUrl) {
+      try {
+        setUploading(true);
+        finalImageUrl = await uploadPostImage(selectedImage);
+        setImageUrl(finalImageUrl);
+      } catch (e) {
+        alert("Erreur lors de l'upload de l'image");
+        setUploading(false);
+        return;
+      }
+    }
+    postBreeze(text, tags, finalImageUrl, accessToken)
       .then(() => {
-        // Rediriger vers la page d’accueil ou une autre page après succès
+        setText("");
+        setSelectedImage(null);
+        setImageUrl("");
+        setUploading(false);
         router.push("/home");
       })
       .catch((error) => {
+        setUploading(false);
         console.error("Error posting breath:", error);
         // Gérer l’erreur (afficher un message, etc.)
       });
@@ -50,9 +81,8 @@ export default function CreateBreathPage() {
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setSelectedImage(reader.result);
-    reader.readAsDataURL(file);
+    setSelectedImage(file);
+    setImageUrl("");
   };
 
   // Fonction pour colorer les hashtags dans le texte
@@ -199,6 +229,17 @@ export default function CreateBreathPage() {
             className="hidden"
           />
         </div>
+      {/* Affichage de l'image sélectionnée */}
+      {selectedImage && (
+        <div className="flex justify-center mt-4">
+          <img
+            src={imageUrl || URL.createObjectURL(selectedImage)}
+            alt="aperçu"
+            className="max-w-xs max-h-60 rounded-lg border"
+          />
+        </div>
+      )}
+      {uploading && <div className="text-center text-accent">Upload en cours...</div>}
       </footer>
     </div>
   );

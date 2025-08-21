@@ -150,8 +150,8 @@ exports.register = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Strict",
+      secure: true, // obligatoire en HTTPS (Vercel/Render)
+      sameSite: "None", // autorise le cross-site
       maxAge: 7 * 24 * 60 * 60 * 1000, // durée de vie 7 jours
     });
 
@@ -240,8 +240,8 @@ exports.login = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Strict",
+      secure: true, // obligatoire en HTTPS (Vercel/Render)
+      sameSite: "None", // autorise le cross-site
       maxAge: 7 * 24 * 60 * 60 * 1000, // durée de vie 7 jours
     });
     console.log("[LOGIN] Cookie refreshToken envoyé");
@@ -299,8 +299,8 @@ exports.logout = async (req, res) => {
     // Suppression du cookie côté client
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      secure: false, // ou true si HTTPS
-      sameSite: "Strict",
+      secure: true, // obligatoire en HTTPS (Vercel/Render)
+      sameSite: "None", // autorise le cross-site
     });
 
     return res.status(200).json({ message: "Successfully logged out" });

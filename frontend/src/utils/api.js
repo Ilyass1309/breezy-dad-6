@@ -42,7 +42,12 @@ const makeClient = (baseURL) => {
   client.interceptors.request.use(
     (req) => {
       const accessToken = Cookies.get("accessToken");
-      if (accessToken) req.headers["Authorization"] = `Bearer ${accessToken}`;
+      if (accessToken) {
+        console.log("[API] accessToken utilisé:", accessToken);
+        req.headers["Authorization"] = `Bearer ${accessToken}`;
+      } else {
+        console.log("[API] Aucun accessToken trouvé dans les cookies");
+      }
       return req;
     },
     (err) => Promise.reject(err)

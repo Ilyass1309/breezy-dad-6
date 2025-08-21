@@ -9,7 +9,7 @@ cloudinary.config({
 
 exports.uploadPostImage = (req, res) => {
   console.log("[UPLOAD] Reçu une requête d'upload d'image de post");
-  const form = formidable({ multiples: false });
+  const form = new formidable.IncomingForm({ multiples: false });
   form.parse(req, async (err, fields, files) => {
     if (err) {
       console.error("[UPLOAD] Erreur de parsing formidable:", err);

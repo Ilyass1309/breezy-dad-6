@@ -165,25 +165,32 @@ exports.register = async (req, res) => {
 // LOGIN : demande les données à user-service
 exports.login = async (req, res) => {
   try {
+    console.log("[LOGIN] Début de la fonction login");
     const { identifier, password } = req.body;
-    console.log("Login request body:", req.body);
+    console.log("[LOGIN] Corps de la requête:", req.body);
 
     if (!identifier || !password) {
+      console.log("[LOGIN] Identifiant ou mot de passe manquant");
       return res
         .status(400)
         .json({ message: "Missing identifier or password" });
     }
 
     const userServiceURL = process.env.USER_SERVICE_URL;
+    console.log("[LOGIN] USER_SERVICE_URL:", userServiceURL);
 
     // Récupération des infos utilisateur pour login
+    console.log("[LOGIN] Appel à:", `${userServiceURL}/api/users/auth-data`, "avec identifier:", identifier);
     const { data: user } = await axios.get(
       `${userServiceURL}/api/users/auth-data`,
       { params: { identifier } }
     );
+    console.log("[LOGIN] Données utilisateur reçues:", user);
 
     const isPasswordValid = bcrypt.compareSync(password, user.hashedPassword);
+    console.log("[LOGIN] Résultat comparaison mot de passe:", isPasswordValid);
     if (!isPasswordValid) {
+      console.log("[LOGIN] Mot de passe invalide");
       return res
         .status(401)
         .json({ message: "Invalid email/username or password" });
@@ -195,6 +202,7 @@ exports.login = async (req, res) => {
       process.env.ACCESS_JWT_KEY,
       { expiresIn: "10m" }
     );
+    console.log("[LOGIN] accessToken généré");
 
     const refreshToken = jwt.sign(
       {
@@ -206,11 +214,14 @@ exports.login = async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "1d" }
     );
+    console.log("[LOGIN] refreshToken généré");
 
     // Stocker le refreshToken côté user-service
+    console.log("[LOGIN] Stockage du refreshToken côté user-service");
     await axios.post(`${userServiceURL}/api/users/${user.id}/refreshTokens`, {
       refreshToken,
     });
+    console.log("[LOGIN] refreshToken stocké côté user-service");
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -218,19 +229,22 @@ exports.login = async (req, res) => {
       sameSite: "Strict",
       maxAge: 7 * 24 * 60 * 60 * 1000, // durée de vie 7 jours
     });
+    console.log("[LOGIN] Cookie refreshToken envoyé");
 
     res.status(200).json({
       message: "You are now connected!",
       accessToken,
       userId: user.id,
     });
+    console.log("[LOGIN] Fin de la fonction login - succès");
   } catch (err) {
     if (err.response && err.response.status === 404) {
+      console.log("[LOGIN] Utilisateur non trouvé (404)");
       return res
         .status(401)
         .json({ message: "Invalid email/username or password" });
     }
-    console.error("Login error:", err.message);
+    console.error("[LOGIN] Erreur:", err.message);
     return res.status(500).json({ message: "Internal server error", err });
   }
 };

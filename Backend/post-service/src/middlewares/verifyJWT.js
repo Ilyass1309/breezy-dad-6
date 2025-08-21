@@ -16,7 +16,7 @@ const verifyJWT = async (req, res, next) => {
   try {
 
     const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://auth-service:3000';
-    const verifyUrl = authServiceUrl.replace(/\/$/, '') + '/auth/verify';
+    const verifyUrl = authServiceUrl.replace(/\/$/, '') + '/api/auth/verify';
     const response = await axios.get(verifyUrl, {
       headers: { Authorization: authHeader },
     });

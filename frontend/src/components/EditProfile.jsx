@@ -3,6 +3,7 @@ import { updateUserProfile } from "../utils/api";
 import { useAuth } from "@/contexts/authcontext";
 import { useState } from "react";
 
+export default function EditProfile({ open, onClose }) {
   const { user, accessToken, setUser } = useAuth();
   const t = useTranslations("EditProfile");
   const [uploading, setUploading] = useState(false);
@@ -139,4 +140,5 @@ import { useState } from "react";
       </div>
     </div>
   );
+}
 

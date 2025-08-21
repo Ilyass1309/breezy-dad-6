@@ -82,8 +82,8 @@ exports.refreshToken = async (req, res) => {
     // 5. Met à jour le cookie
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
-      secure: false, // true en prod HTTPS
-      sameSite: "Strict",
+      secure: true, // true en prod HTTPS
+      sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
     });
     console.log("[REFRESH] Cookie refreshToken mis à jour");

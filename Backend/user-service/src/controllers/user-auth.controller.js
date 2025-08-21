@@ -2,23 +2,30 @@ const User = require("../models/user.model");
 
 // Contrôleur pour /auth-data
 exports.getAuthData = async (req, res) => {
+  console.log("[USER-AUTH] Début getAuthData");
   const identifier = req.query.identifier;
+  console.log("[USER-AUTH] Query identifier:", identifier);
 
   if (!identifier) {
+    console.log("[USER-AUTH] Identifiant manquant");
     return res
       .status(400)
       .json({ error: "Missing identifier (email or username)" });
   }
 
   try {
+    console.log("[USER-AUTH] Recherche utilisateur dans la base...");
     const user = await User.findOne({
       $or: [{ email: identifier }, { username: identifier }],
     });
+    console.log("[USER-AUTH] Résultat de la recherche:", user ? user._id : null);
 
     if (!user) {
+      console.log("[USER-AUTH] Utilisateur non trouvé");
       return res.status(404).json({ error: "User not found" });
     }
 
+    console.log("[USER-AUTH] Utilisateur trouvé, envoi des données auth");
     return res.status(200).json({
       id: user._id,
       email: user.email,
@@ -26,7 +33,7 @@ exports.getAuthData = async (req, res) => {
       hashedPassword: user.password,
     });
   } catch (err) {
-    console.error("Error in /auth-data:", err);
+    console.error("[USER-AUTH] Erreur dans /auth-data:", err);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

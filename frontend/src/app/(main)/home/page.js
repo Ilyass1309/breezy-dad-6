@@ -51,10 +51,10 @@ export default function HomePage() {
   ];
 
   return (
-    <MainLayout
-      left={null}
-      center={
-        <>
+    <MainLayout>
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-8">
+        {/* Main feed */}
+        <div className="flex-1 min-w-0">
           <nav className="tabs tabs-bordered mb-4" role="tablist">
             <button
               role="tab"
@@ -83,9 +83,12 @@ export default function HomePage() {
               <Feed posts={posts} loadingPosts={loadingPosts} />
             </section>
           )}
-        </>
-      }
-      right={<RightSidebar trending={trending} suggestions={suggestions} loading={false} />}
-    />
+        </div>
+        {/* Right sidebar */}
+        <div className="hidden lg:block w-full max-w-xs flex-shrink-0">
+          <RightSidebar trending={trending} suggestions={suggestions} loading={false} />
+        </div>
+      </div>
+    </MainLayout>
   );
 }

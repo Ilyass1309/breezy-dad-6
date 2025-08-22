@@ -183,6 +183,12 @@ export async function postBreeze(text, tags, image) {
   const res = await postClient.post(`/api/posts/`, { content: text, tags, image });
   return res.data;
 }
+export async function postBreeze(text, tags, imageUrl) {
+  // On envoie mediaUrls comme tableau si imageUrl existe, sinon tableau vide
+  const mediaUrls = imageUrl ? [imageUrl] : [];
+  const res = await postClient.post(`/api/posts/`, { content: text, tags, mediaUrls });
+  return res.data;
+}
 
 export async function likeBreeze(setLiked, postID, token) {
   const path = setLiked

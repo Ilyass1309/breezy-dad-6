@@ -66,7 +66,7 @@ export default function CreateBreathPage() {
         return;
       }
     }
-    postBreeze(text, tags, finalImageUrl, accessToken)
+  postBreeze(text, tags, finalImageUrl)
       .then(() => {
         setText("");
         setSelectedImage(null);

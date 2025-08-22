@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/authcontext";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 
-export default function MainLayout({ children }) {
+export default function MainLayout({ left, center, right }) {
   const { accessToken } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -25,14 +25,12 @@ export default function MainLayout({ children }) {
         <div
           className="mx-auto w-full max-w-[1280px] gap-6 px-4 sm:px-6 lg:px-8 grid xl:grid-cols-[260px_minmax(0,1fr)_260px]"
         >
-          {/* LEFT SIDEBAR (optionnel) */}
-          <aside className="hidden lg:block sticky top-20 h-fit"></aside>
-          {/* FEED */}
-          <main className="min-w-0">
-            <div className="mx-auto max-w-[700px]">{children}</div>
-          </main>
+          {/* LEFT SIDEBAR */}
+          <aside className="hidden lg:block sticky top-20 h-fit">{left}</aside>
+          {/* FEED (center) */}
+          <main className="min-w-0">{center}</main>
           {/* RIGHT SIDEBAR */}
-          <aside className="hidden xl:block sticky top-20 h-fit pl-6 border-l border-neutral-200/70 dark:border-neutral-800"></aside>
+          <aside className="hidden xl:block sticky top-20 h-fit pl-6 border-l border-neutral-200/70 dark:border-neutral-800">{right}</aside>
         </div>
       </div>
     </>

@@ -6,6 +6,7 @@ import { fetchUserFeed, fetchFYP } from "@/utils/api";
 import Feed from "@/components/Feed";
 import RightSidebar from "@/components/RightSidebar";
 import { useTranslations } from "next-intl";
+import HomeLayout from "../layout";
 
 export default function HomePage() {
   const { accessToken } = useAuth();
@@ -14,7 +15,7 @@ export default function HomePage() {
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [forYouPosts, setFYP] = useState([]);
   const [loadingFYP, setLoadingFYP] = useState(true);
-  const [selectedTab, setSelectedTab] = useState("forYou"); // 'home' ou 'profile'
+  const [selectedTab, setSelectedTab] = useState("forYou");
 
   useEffect(() => {
     async function loadPosts() {
@@ -35,14 +36,25 @@ export default function HomePage() {
     loadPosts();
   }, [accessToken]);
 
+  // Mock data for demo (replace with real data)
+  const trending = [
+    { tag: "fun", count: 1200 },
+    { tag: "image", count: 980 },
+    { tag: "music", count: 870 },
+    { tag: "coding", count: 650 },
+    { tag: "travel", count: 540 },
+  ];
+  const suggestions = [
+    { id: 1, username: "alice", avatar: "/file.svg", bio: "Frontend dev" },
+    { id: 2, username: "bob", avatar: "/globe.svg", bio: "Photographer" },
+    { id: 3, username: "charlie", avatar: "/vercel.svg", bio: "Music lover" },
+  ];
+
   return (
-    <main className="p-4">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-        {/* Sidebar gauche (déjà existante, placeholder ici) */}
-        <div className="hidden md:block md:col-span-2"></div>
-        {/* Feed principal */}
-        <div className="col-span-1 md:col-span-7">
-          {/* Onglets */}
+    <HomeLayout
+      left={null}
+      feed={
+        <>
           <nav className="tabs tabs-bordered mb-4" role="tablist">
             <button
               role="tab"
@@ -61,24 +73,19 @@ export default function HomePage() {
               {t("follow")}
             </button>
           </nav>
-          {/* Contenu de l’onglet Home */}
           {selectedTab === "forYou" && (
             <section role="tabpanel" className="space-y-4">
               <Feed posts={forYouPosts} loadingPosts={loadingFYP} />
             </section>
           )}
-          {/* Contenu de l’onglet Profile */}
           {selectedTab === "follow" && (
             <section role="tabpanel" className="space-y-4">
               <Feed posts={posts} loadingPosts={loadingPosts} />
             </section>
           )}
-        </div>
-        {/* Sidebar droite */}
-        <div className="hidden md:block md:col-span-3">
-          <RightSidebar />
-        </div>
-      </div>
-    </main>
+        </>
+      }
+      right={<RightSidebar trending={trending} suggestions={suggestions} loading={false} />}
+    />
   );
 }

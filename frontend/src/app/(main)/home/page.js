@@ -6,7 +6,8 @@ import { fetchUserFeed, fetchFYP } from "@/utils/api";
 import Feed from "@/components/Feed";
 import RightSidebar from "@/components/RightSidebar";
 import { useTranslations } from "next-intl";
-import HomeLayout from "../layout";
+import MainLayout from "../layout";
+import NavBar from "@/components/NavBar";
 
 export default function HomePage() {
   const { accessToken } = useAuth();
@@ -51,41 +52,40 @@ export default function HomePage() {
   ];
 
   return (
-    <HomeLayout
-      left={null}
-      feed={
-        <>
-          <nav className="tabs tabs-bordered mb-4" role="tablist">
-            <button
-              role="tab"
-              aria-selected={selectedTab === "forYou"}
-              className={`tab w-full ${selectedTab === "forYou" ? "tab-active" : ""}`}
-              onClick={() => setSelectedTab("forYou")}
-            >
-              {t("forYou")}
-            </button>
-            <button
-              role="tab"
-              aria-selected={selectedTab === "follow"}
-              className={`tab w-full ${selectedTab === "follow" ? "tab-active" : ""}`}
-              onClick={() => setSelectedTab("follow")}
-            >
-              {t("follow")}
-            </button>
-          </nav>
-          {selectedTab === "forYou" && (
-            <section role="tabpanel" className="space-y-4">
-              <Feed posts={forYouPosts} loadingPosts={loadingFYP} />
-            </section>
-          )}
-          {selectedTab === "follow" && (
-            <section role="tabpanel" className="space-y-4">
-              <Feed posts={posts} loadingPosts={loadingPosts} />
-            </section>
-          )}
-        </>
-      }
-      right={<RightSidebar trending={trending} suggestions={suggestions} loading={false} />}
-    />
+    <MainLayout>
+      {/* LEFT SIDEBAR */}
+      <NavBar />
+      {/* FEED (colonne centrale) */}
+      <nav className="tabs tabs-bordered mb-4" role="tablist">
+        <button
+          role="tab"
+          aria-selected={selectedTab === "forYou"}
+          className={`tab w-full ${selectedTab === "forYou" ? "tab-active" : ""}`}
+          onClick={() => setSelectedTab("forYou")}
+        >
+          {t("forYou")}
+        </button>
+        <button
+          role="tab"
+          aria-selected={selectedTab === "follow"}
+          className={`tab w-full ${selectedTab === "follow" ? "tab-active" : ""}`}
+          onClick={() => setSelectedTab("follow")}
+        >
+          {t("follow")}
+        </button>
+      </nav>
+      {selectedTab === "forYou" && (
+        <section role="tabpanel" className="space-y-4">
+          <Feed posts={forYouPosts} loadingPosts={loadingFYP} />
+        </section>
+      )}
+      {selectedTab === "follow" && (
+        <section role="tabpanel" className="space-y-4">
+          <Feed posts={posts} loadingPosts={loadingPosts} />
+        </section>
+      )}
+      {/* RIGHT SIDEBAR */}
+      <RightSidebar trending={trending} suggestions={suggestions} loading={false} />
+    </MainLayout>
   );
 }

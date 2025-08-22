@@ -91,8 +91,8 @@ export default function RightSidebar({ trending = [], suggestions = [], loading 
           <ul>
             {loading
               ? suggestionsSkeleton
-              : suggestions.slice(0, 5).map((user) => (
-                  <li key={user.id} className="flex items-center gap-3 py-2">
+        : suggestions.slice(0, 5).map((user) => (
+          <li key={user && user.id ? user.id : user?.username || Math.random()} className="flex items-center gap-3 py-2">
                     <img
                       src={user.avatar || "/file.svg"}
                       alt={user.username}
@@ -110,22 +110,22 @@ export default function RightSidebar({ trending = [], suggestions = [], loading 
                       type="button"
                       className={
                         "h-8 px-3 rounded-full text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 " +
-                        (following[user.id]
+                        (user && user.id && following[user.id]
                           ? "border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-200"
                           : "bg-violet-600 hover:bg-violet-700 text-white") +
-                        (loadingBtn[user.id] ? " opacity-60 cursor-not-allowed" : "")
+                        (user && user.id && loadingBtn[user.id] ? " opacity-60 cursor-not-allowed" : "")
                       }
                       aria-label={
-                        following[user.id]
+                        user && user.id && following[user.id]
                           ? `Unfollow ${user.username}`
                           : `Follow ${user.username}`
                       }
-                      disabled={loadingBtn[user.id]}
-                      onClick={() => handleFollow(user.id)}
+                      disabled={user && user.id && loadingBtn[user.id]}
+                      onClick={() => user && user.id && handleFollow(user.id)}
                     >
-                      {loadingBtn[user.id]
+                      {user && user.id && loadingBtn[user.id]
                         ? "..."
-                        : following[user.id]
+                        : user && user.id && following[user.id]
                         ? "Following"
                         : "Follow"}
                     </button>

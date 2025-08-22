@@ -12,7 +12,7 @@ export default function Post({ post, link = true }) {
   const locale = useLocale();
   const [author, setAuthor] = useState(null);
   const { user } = useAuth();
-  const isLiked = post.likes.includes(user.id);
+  const isLiked = user && post.likes && Array.isArray(post.likes) ? post.likes.includes(user.id) : false;
   const router = useRouter();
 
   useEffect(() => {

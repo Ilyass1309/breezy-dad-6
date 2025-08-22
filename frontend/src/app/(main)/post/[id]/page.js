@@ -5,8 +5,7 @@ import { fetchPost } from "@/utils/api";
 import { useEffect, useState, use } from "react";
 import { useTranslations } from "next-intl";
 export default function PostPage({ params }) {
-  const { id } = use(params);
-  // Utilisez React.use() pour obtenir les params
+  const id = params?.id;
   const [post, setPost] = useState(null);
   const t = useTranslations("Post");
 

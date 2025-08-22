@@ -111,17 +111,17 @@ export default function Comment({
   const handleLike = async () => {
     try {
       setError(null);
-      const alreadyLiked = likes.includes(user.id);
+  const alreadyLiked = user && user.id && likes ? likes.includes(user.id) : false;
 
       if (alreadyLiked) {
         const result = await unlikeComment(comment._id, accessToken);
         if (result.success) {
-          setLikes((prev) => prev.filter((id) => id !== user.id));
+          if (user && user.id) setLikes((prev) => prev.filter((id) => id !== user.id));
         }
       } else {
         const result = await likeComment(comment._id, accessToken);
         if (result.success) {
-          setLikes((prev) => [...prev, user.id]);
+          if (user && user.id) setLikes((prev) => [...prev, user.id]);
         }
       }
     } catch (error) {
@@ -202,7 +202,7 @@ export default function Comment({
   return (
     <>
       <div className="relative flex flex-col gap-2 p-2">
-        {comment.author === user.id && !isEditing && (
+  {user && user.id && comment.author === user.id && !isEditing && (
           <>
             <button
               onClick={() => setEditingCommentId(comment._id)}
@@ -325,14 +325,14 @@ export default function Comment({
                 >
                   <div
                     className={`p-1 rounded-full ${
-                      likes.includes(user.id)
+                      user && user.id && likes ? likes.includes(user.id) : false
                         ? "text-red-600"
                         : "bg-transparent text-base-content"
                     }`}
                   >
                     <Heart
                       size={14}
-                      fill={likes.includes(user.id) ? "currentColor" : "none"}
+                      fill={user && user.id && likes && likes.includes(user.id) ? "currentColor" : "none"}
                     />
                   </div>
                   {likes.length}

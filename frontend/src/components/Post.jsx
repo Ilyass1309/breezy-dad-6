@@ -85,19 +85,23 @@ export default function Post({ post, link = true }) {
           {new Date(post.createdAt).toLocaleDateString(locale)}
         </span>
       </div>
-      <p>{renderContentWithTags(post.content)}</p>
-      {post.mediaUrls && post.mediaUrls.length > 0 && (
-        <div className="mt-4">
-          {post.mediaUrls.map((url, index) => (
-            <img
-              key={index}
-              src={url}
-              alt={`Post image ${index + 1}`}
-              className="w-full h-auto rounded-lg shadow-md"
-            />
-          ))}
-        </div>
-      )}
+      <div>
+        <p>{renderContentWithTags(post.content)}</p>
+        {post.mediaUrls && post.mediaUrls.length > 0 && (
+          <div className="flex justify-center items-center mt-4">
+            {post.mediaUrls.map((url, index) => (
+              <div key={index} className="max-w-xs max-h-60 w-full h-auto overflow-hidden rounded-lg shadow-md">
+                <img
+                  src={url}
+                  alt={`Post image ${index + 1}`}
+                  className="object-cover w-full h-60 rounded-lg"
+                  style={{ maxWidth: '100%', maxHeight: '15rem' }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       <LikeButton
         isLiked={isLiked}
         count={post.likes.length}

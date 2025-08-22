@@ -57,6 +57,7 @@ export default function Post({ post, link = true }) {
           router.push(`/post/${post._id}`);
         }
       }}
+      className="mx-auto my-6" style={{ maxWidth: '900px', width: '100%' }}
     >
       <div className="flex items-center gap-3 mb-2">
         <div className="tooltip tooltip-toggle" aria-label="Popover Button">

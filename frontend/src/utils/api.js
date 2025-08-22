@@ -178,11 +178,12 @@ export async function fetchFYP() {
   const res = await postClient.get(`/api/posts/fyp`);
   return res.data;
 }
-
+/*
 export async function postBreeze(text, tags, image) {
   const res = await postClient.post(`/api/posts/`, { content: text, tags, image });
   return res.data;
-}
+}*/
+
 export async function postBreeze(text, tags, imageUrl) {
   // On envoie mediaUrls comme tableau si imageUrl existe, sinon tableau vide
   const mediaUrls = imageUrl ? [imageUrl] : [];

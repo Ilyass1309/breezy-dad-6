@@ -310,68 +310,15 @@ module.exports = {
         console.error("Failed to fetch following list:", err.message);
       }
 
-      // Récupère les posts des abonnements
-      let followingPosts = [];
-      if (followingIds.length > 0) {
-        followingPosts = await Post.find({ author: { $in: followingIds } })
-          .sort({ createdAt: -1 })
-          .limit(20)
-          .lean()
-          .exec();
-      }
-
-      // Récupère les posts populaires (hors abonnements)
-      const now = new Date();
-      const trendingPosts = await Post.aggregate([
-        { $match: { author: { $nin: followingIds.concat([user_id]) } } },
-        {
-          $addFields: {
-            likesCount: { $size: "$likes" },
-            commentsCount: { $size: "$comments" },
-            ageInHours: {
-              $divide: [{ $subtract: [now, "$createdAt"] }, 1000 * 60 * 60],
-            },
-          },
-        },
-        {
-          $addFields: {
-            score: {
-              $subtract: [
-                {
-                  $add: ["$likesCount", { $multiply: [0.5, "$commentsCount"] }],
-                },
-                { $multiply: [0.3, "$ageInHours"] },
-              ],
-            },
-          },
-        },
-        { $sort: { score: -1 } },
-        { $limit: 20 },
+      const sampleSize = 8;
+      const posts = await Post.aggregate([
+        { $match: { author: { $nin: [user_id] } } },
+        { $sample: { size: sampleSize } },
       ]);
 
-      // Fusionne et retire les doublons par _id
-      const postMap = new Map();
-      for (const post of followingPosts) {
-        postMap.set(String(post._id), post);
-      }
-      for (const post of trendingPosts) {
-        if (!postMap.has(String(post._id))) {
-          postMap.set(String(post._id), post);
-        }
-      }
-      let allPosts = Array.from(postMap.values());
-
-      // Trie par nombre de likes décroissant, puis date décroissante
-      allPosts.sort((a, b) => {
-        const likesA = Array.isArray(a.likes) ? a.likes.length : (a.likesCount || 0);
-        const likesB = Array.isArray(b.likes) ? b.likes.length : (b.likesCount || 0);
-        if (likesB !== likesA) return likesB - likesA;
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      });
-
-      return res.status(200).json(allPosts);
+      return res.status(200).json(posts);
     } catch (err) {
-      console.error("Error generating For You feed:", err);
+      console.error("Error generating For You feed (random):", err);
       return res.status(500).json({ message: "Internal server error" });
     }
   },

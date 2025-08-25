@@ -174,9 +174,15 @@ export default function ProfileCard({ user, full = false }) {
               />
               <button
                 className="btn btn-xs btn-warning"
+                disabled={followersInput === '' || isNaN(Number(followersInput))}
                 onClick={async () => {
+                  const value = Number(followersInput);
+                  if (followersInput === '' || isNaN(value)) {
+                    alert("Veuillez entrer un nombre valide d'abonnés.");
+                    return;
+                  }
                   try {
-                    await setFollowersCount(userProfile._id, Number(followersInput));
+                    await setFollowersCount(userProfile._id, value);
                     alert("Compteur modifié !");
                   } catch (err) {
                     alert("Erreur: " + (err?.response?.data?.msg || err.message || err));

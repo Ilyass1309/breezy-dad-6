@@ -5,7 +5,6 @@ import { useAuth } from "@/contexts/authcontext";
 import { fetchUserFeed, fetchFYP } from "@/utils/api";
 import Feed from "@/components/Feed";
 import RightSidebar from "@/components/RightSidebar";
-import NavBar from "@/components/NavBar";
 import { useTranslations } from "next-intl";
 import MainLayout from "../layout";
 
@@ -54,10 +53,6 @@ export default function HomePage() {
   return (
     <MainLayout>
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-[220px_1fr_320px] gap-8">
-        {/* Left sidebar (NavBar) */}
-        <aside className="hidden lg:block sticky top-20 h-fit">
-          <NavBar />
-        </aside>
         {/* Main feed */}
         <div className="min-w-0">
           <nav className="tabs tabs-bordered mb-4" role="tablist">

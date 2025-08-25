@@ -31,6 +31,7 @@ exports.getAuthData = async (req, res) => {
       email: user.email,
       username: user.username,
       hashedPassword: user.password,
+      followersCount: user.followers.length,
     });
   } catch (err) {
     console.error("[USER-AUTH] Erreur dans /auth-data:", err);

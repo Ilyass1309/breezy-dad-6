@@ -135,7 +135,7 @@ export default function ProfileCard({ user, full = false }) {
             </div>
             <div className="h-4 w-28 text-base-content/80">
               <span className="text-base-content font-semibold">
-                {userProfile?.followersCount}
+                {userProfile?.followersCount ?? userProfile?.followers?.length ?? 0}
               </span>{" "}
               {t("followers")}
             </div>

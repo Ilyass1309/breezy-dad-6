@@ -175,8 +175,9 @@ export default function ProfileCard({ user, full = false }) {
                   if (!userId && userProfile?.username) {
                     try {
                       const fullProfile = await fetchUserProfile(userProfile.username);
-                      userId = fullProfile?._id;
+                      userId = fullProfile?._id || fullProfile?.id; 
                       if (!userId) {
+                        console.log("Profil complet reçu :", fullProfile); // debug
                         alert("Impossible de trouver l'identifiant du compte.");
                         return;
                       }

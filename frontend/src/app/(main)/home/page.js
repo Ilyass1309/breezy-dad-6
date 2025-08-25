@@ -51,44 +51,44 @@ export default function HomePage() {
   ];
 
   return (
-    <MainLayout>
-  <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-8 min-h-[80vh]">
-  {/* Main feed (occupe tout l'espace entre NavBar et colonne de droite) */}
-  <div className="flex-1 min-w-0">
-          <nav className="tabs tabs-bordered mb-4" role="tablist">
-            <button
-              role="tab"
-              aria-selected={selectedTab === "forYou"}
-              className={`tab w-full ${selectedTab === "forYou" ? "tab-active" : ""}`}
-              onClick={() => setSelectedTab("forYou")}
-            >
-              {t("forYou")}
-            </button>
-            <button
-              role="tab"
-              aria-selected={selectedTab === "follow"}
-              className={`tab w-full ${selectedTab === "follow" ? "tab-active" : ""}`}
-              onClick={() => setSelectedTab("follow")}
-            >
-              {t("follow")}
-            </button>
-          </nav>
-          {selectedTab === "forYou" && (
-            <section role="tabpanel" className="space-y-4">
-              <Feed posts={forYouPosts} loadingPosts={loadingFYP} />
-            </section>
-          )}
-          {selectedTab === "follow" && (
-            <section role="tabpanel" className="space-y-4">
-              <Feed posts={posts} loadingPosts={loadingPosts} />
-            </section>
-          )}
-        </div>
-        {/* Right sidebar, poussée à droite */}
-        <aside className="hidden lg:block sticky top-20 h-fit w-[320px] flex-shrink-0">
-          <RightSidebar trending={trending} suggestions={suggestions} loading={false} />
-        </aside>
-      </div>
-    </MainLayout>
+    <main className="p-6">
+      {/* Onglets */}
+      <nav className="tabs tabs-bordered mb-4" role="tablist">
+        <button
+          role="tab"
+          aria-selected={selectedTab === "forYou"}
+          className={`tab w-full ${
+            selectedTab === "forYou" ? "tab-active" : ""
+          }`}
+          onClick={() => setSelectedTab("forYou")}
+        >
+          {t("forYou")}
+        </button>
+        <button
+          role="tab"
+          aria-selected={selectedTab === "follow"}
+          className={`tab w-full ${
+            selectedTab === "follow" ? "tab-active" : ""
+          }`}
+          onClick={() => setSelectedTab("follow")}
+        >
+          {t("follow")}
+        </button>
+      </nav>
+
+      {/* Contenu de l’onglet Home */}
+      {selectedTab === "forYou" && (
+        <section role="tabpanel" className="space-y-4">
+          <Feed posts={forYouPosts} loadingPosts={loadingFYP} />
+        </section>
+      )}
+
+      {/* Contenu de l’onglet Profile */}
+      {selectedTab === "follow" && (
+        <section role="tabpanel" className="space-y-4">
+          <Feed posts={posts} loadingPosts={loadingPosts} />
+        </section>
+      )}
+    </main>
   );
 }

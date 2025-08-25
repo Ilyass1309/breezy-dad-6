@@ -19,13 +19,9 @@ export default function MainLayout({ children }) {
 
   return (
     <>
-      {/* NavBar latérale fixe, étroite */}
-      <div className="fixed top-0 left-0 h-full w-14 z-50 bg-base-100 border-r border-base-200 hidden sm:block">
-        <NavBar />
-      </div>
-      {/* Contenu principal avec margin-left pour ne pas passer sous la NavBar */}
-      <div className="sm:ml-14">
-        {children}
+      <NavBar />
+      <div className="flex pt-16 sm:pt-0 transition-all h-full sm:ml-64">
+        <div className="w-full h-full">{children}</div>
       </div>
     </>
   );

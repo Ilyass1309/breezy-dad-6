@@ -52,9 +52,9 @@ export default function HomePage() {
 
   return (
     <MainLayout>
-  <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 min-h-[80vh]">
+  <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-8 min-h-[80vh]">
   {/* Main feed (occupe tout l'espace entre NavBar et colonne de droite) */}
-  <div className="min-w-0 w-full">
+  <div className="flex-1 min-w-0">
           <nav className="tabs tabs-bordered mb-4" role="tablist">
             <button
               role="tab"
@@ -85,11 +85,9 @@ export default function HomePage() {
           )}
         </div>
         {/* Right sidebar, poussée à droite */}
-        <div className="hidden lg:flex justify-end">
-          <aside className="sticky top-20 h-fit w-[320px]">
-            <RightSidebar trending={trending} suggestions={suggestions} loading={false} />
-          </aside>
-        </div>
+        <aside className="hidden lg:block sticky top-20 h-fit w-[320px] flex-shrink-0">
+          <RightSidebar trending={trending} suggestions={suggestions} loading={false} />
+        </aside>
       </div>
     </MainLayout>
   );

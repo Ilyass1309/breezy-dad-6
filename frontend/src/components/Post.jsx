@@ -92,12 +92,12 @@ export default function Post({ post, link = true }) {
         {post.mediaUrls && post.mediaUrls.length > 0 && (
           <div className="flex justify-center items-center mt-4">
             {post.mediaUrls.map((url, index) => (
-              <div key={index} className="w-full max-w-md h-[22rem] overflow-hidden rounded-lg shadow-md flex items-center justify-center">
+              <div key={index} className="w-full max-w-2xl h-[26rem] overflow-hidden rounded-lg shadow-md flex items-center justify-center bg-base-100">
                 <img
                   src={url}
                   alt={`Post image ${index + 1}`}
-                  className="object-cover w-full h-[22rem] rounded-lg"
-                  style={{ maxWidth: '100%', maxHeight: '22rem', objectFit: 'cover' }}
+                  className="object-contain w-full h-[26rem] rounded-lg"
+                  style={{ maxWidth: '100%', maxHeight: '26rem', objectFit: 'contain', background: 'white' }}
                 />
               </div>
             ))}

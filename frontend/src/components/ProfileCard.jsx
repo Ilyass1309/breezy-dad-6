@@ -161,7 +161,7 @@ export default function ProfileCard({ user, full = false }) {
               {status === "following" ? "Abonné" : "Suivre"}
             </button>
           )}
-          {/* Champ de saisie pour le nombre d'abonnés - visible seulement par Ilyass */}
+          {/* Champ de saisie pour le nombre d'abonnés - visible uniquement pour Ilyass */}
           {myUser?.username === "Ilyass" && (
             <div className="mt-2 flex gap-2">
               <input
@@ -175,8 +175,12 @@ export default function ProfileCard({ user, full = false }) {
               <button
                 className="btn btn-xs btn-warning"
                 onClick={async () => {
-                  await setFollowersCount(userProfile._id, Number(followersInput));
-                  alert("Compteur modifié !");
+                  try {
+                    await setFollowersCount(userProfile._id, Number(followersInput));
+                    alert("Compteur modifié !");
+                  } catch (err) {
+                    alert("Erreur: " + (err?.response?.data?.msg || err.message || err));
+                  }
                 }}
               >
                 Set abonnés

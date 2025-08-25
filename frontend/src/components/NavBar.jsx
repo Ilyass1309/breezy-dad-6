@@ -13,7 +13,7 @@ import UserAvatar from "./UserAvatar";
 import { fetchUserProfile } from "@/utils/api";
 import MenuItem from "./MenuItem";
 
-const ASIDE_WIDTH = 320; // px
+const ASIDE_WIDTH = 256; // px
 
 export default function NavBar() {
   const { user } = useAuth();

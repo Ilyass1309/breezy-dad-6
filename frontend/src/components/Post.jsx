@@ -16,49 +16,6 @@ export default function Post({ post, link = true }) {
   const isLiked = user && post.likes && Array.isArray(post.likes) ? post.likes.includes(user.id) : false;
   const router = useRouter();
 
-  // Composant ZoomableImage pour afficher une image avec bouton zoom (modale)
-const ZoomableImage = ({ url, alt }) => {
-  const [open, setOpen] = React.useState(false);
-  return (
-    <>
-      <div className="relative w-full max-w-3xl h-[32rem] overflow-hidden rounded-lg shadow-md flex items-center justify-center bg-base-100">
-        <img
-          src={url}
-          alt={alt}
-          className="object-contain w-full h-[32rem] rounded-lg cursor-zoom-in"
-          style={{ maxWidth: '100%', maxHeight: '32rem', objectFit: 'contain', background: 'white' }}
-          onClick={() => setOpen(true)}
-        />
-        <button
-          className="absolute bottom-2 right-2 btn btn-xs btn-primary z-10"
-          onClick={() => setOpen(true)}
-        >
-          Zoom
-        </button>
-      </div>
-      {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
-          onClick={() => setOpen(false)}
-        >
-          <img
-            src={url}
-            alt={alt}
-            className="max-w-full max-h-full shadow-2xl rounded-lg"
-            style={{ background: 'white' }}
-            onClick={e => e.stopPropagation()}
-          />
-          <button
-            className="absolute top-4 right-4 btn btn-sm btn-error"
-            onClick={() => setOpen(false)}
-          >
-            Fermer
-          </button>
-        </div>
-      )}
-    </>
-  );
-};
 
   useEffect(() => {
     async function loadAuthor() {
@@ -136,10 +93,16 @@ const ZoomableImage = ({ url, alt }) => {
         {post.mediaUrls && post.mediaUrls.length > 0 && (
           <div className="flex justify-center items-center mt-4">
             {post.mediaUrls.map((url, index) => (
-              <ZoomableImage key={index} url={url} alt={`Post image ${index + 1}`} />
+              <div key={index} className="w-full max-w-xl h-[22rem] flex items-center justify-center bg-base-100">
+                <img
+                  src={url}
+                  alt={`Post image ${index + 1}`}
+                  className="object-contain w-full h-[22rem]"
+                  style={{ maxWidth: '100%', maxHeight: '22rem', objectFit: 'contain', background: 'white' }}
+                />
+              </div>
             ))}
           </div>
-
         )}
       </div>
       <LikeButton

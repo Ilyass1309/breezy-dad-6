@@ -4,6 +4,7 @@ import {
   followUser,
   unfollowUser,
   fetchUserFollowing,
+  setFollowersCount,
 } from "@/utils/api";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -16,6 +17,7 @@ export default function ProfileCard({ user, full = false }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("not-following");
+  const [followersInput, setFollowersInput] = useState("");
 
   const { user: myUser, accessToken } = useAuth();
 
@@ -158,6 +160,28 @@ export default function ProfileCard({ user, full = false }) {
             >
               {status === "following" ? "Abonné" : "Suivre"}
             </button>
+          )}
+          {/* Champ de saisie pour le nombre d'abonnés - visible seulement par Ilyass */}
+          {myUser?.username === "Ilyass" && (
+            <div className="mt-2 flex gap-2">
+              <input
+                type="number"
+                min={0}
+                placeholder="Nbre abonnés"
+                className="input input-sm input-bordered w-24"
+                value={followersInput}
+                onChange={(e) => setFollowersInput(e.target.value)}
+              />
+              <button
+                className="btn btn-xs btn-warning"
+                onClick={async () => {
+                  await setFollowersCount(userProfile._id, Number(followersInput));
+                  alert("Compteur modifié !");
+                }}
+              >
+                Set abonnés
+              </button>
+            </div>
           )}
         </div>
       )}

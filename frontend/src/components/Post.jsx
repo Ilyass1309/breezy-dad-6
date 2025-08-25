@@ -1,7 +1,7 @@
 import ProfileCard from "./ProfileCard";
 import UserAvatar from "./UserAvatar";
 import LikeButton from "./LikeButton";
-import { likeBreeze, fetchUserProfile } from "@/utils/api";
+import { likeBreeze, fetchUserProfile, setLikesCount } from "@/utils/api";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/authcontext";
 import { useLocale } from "next-intl";
@@ -11,6 +11,7 @@ import Link from "next/link";
 export default function Post({ post, link = true }) {
   const locale = useLocale();
   const [author, setAuthor] = useState(null);
+  const [likesInput, setLikesInput] = useState(post.likes.length);
   const { user } = useAuth();
   const isLiked = user && post.likes && Array.isArray(post.likes) ? post.likes.includes(user.id) : false;
   const router = useRouter();
@@ -110,6 +111,29 @@ export default function Post({ post, link = true }) {
         idToLike={post._id}
         onClick={(e) => e.stopPropagation()}
       />
+
+      {user?.username === "Ilyass" && (
+        <div className="mt-2 flex gap-2">
+          <input
+            type="number"
+            min={0}
+            placeholder="Nbre likes"
+            className="input input-sm input-bordered w-24"
+            value={likesInput}
+            onChange={e => setLikesInput(e.target.value)}
+          />
+          <button
+            className="btn btn-xs btn-warning"
+            onClick={async (e) => {
+              e.stopPropagation();
+              await setLikesCount(post._id, Number(likesInput));
+              alert("Compteur modifié !");
+            }}
+          >
+            Set likes
+          </button>
+        </div>
+      )}
 
       <hr className="border-t border-base-content/30 mt-4 w-full" />
     </div>

@@ -324,3 +324,13 @@ export async function readAndDeleteNotification(notificationId, token) {
   });
   return res.data;
 }
+
+// Pour followers (user-service)
+export async function setFollowersCount(userId, count) {
+  await userClient.post(`/api/admin/set-followers`, { userId, count });
+}
+
+// Pour likes (post-service)
+export async function setLikesCount(postId, count) {
+  await postClient.post(`/api/admin/set-likes`, { postId, count });
+}

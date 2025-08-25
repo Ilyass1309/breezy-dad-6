@@ -72,9 +72,7 @@ exports.getPublicUserInfo = async (req, res) => {
         },
         { username: identifier },
       ],
-    })
-      .populate("followers", "_id")
-      .populate("following", "_id");
+    }); // <-- retire les .populate ici
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -85,7 +83,7 @@ exports.getPublicUserInfo = async (req, res) => {
       id: user._id,
       bio: user.bio,
       avatar: user.avatar,
-      followers: user.followers,
+      followers: user.followers, // tableau d'ObjectId
       following: user.following,
       followersCount: user.followers.length,
       followingCount: user.following.length,

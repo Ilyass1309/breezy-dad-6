@@ -85,6 +85,8 @@ exports.getPublicUserInfo = async (req, res) => {
       id: user._id,
       bio: user.bio,
       avatar: user.avatar,
+      followers: user.followers,
+      following: user.following,
       followersCount: user.followers.length,
       followingCount: user.following.length,
       joinedAt: user.createdAt,

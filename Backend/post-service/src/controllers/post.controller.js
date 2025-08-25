@@ -359,13 +359,15 @@ module.exports = {
           postMap.set(String(post._id), post);
         }
       }
-      const allPosts = Array.from(postMap.values());
+      let allPosts = Array.from(postMap.values());
 
-      // Mélange aléatoirement
-      for (let i = allPosts.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [allPosts[i], allPosts[j]] = [allPosts[j], allPosts[i]];
-      }
+      // Trie par nombre de likes décroissant, puis date décroissante
+      allPosts.sort((a, b) => {
+        const likesA = Array.isArray(a.likes) ? a.likes.length : (a.likesCount || 0);
+        const likesB = Array.isArray(b.likes) ? b.likes.length : (b.likesCount || 0);
+        if (likesB !== likesA) return likesB - likesA;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
 
       return res.status(200).json(allPosts);
     } catch (err) {

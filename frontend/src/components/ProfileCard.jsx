@@ -175,9 +175,9 @@ export default function ProfileCard({ user, full = false }) {
                   if (!userId && userProfile?.username) {
                     try {
                       const fullProfile = await fetchUserProfile(userProfile.username);
+                      console.log('[BTN] Profil complet reçu pour set abonnés:', fullProfile);
                       userId = fullProfile?._id || fullProfile?.id; 
                       if (!userId) {
-                        console.log("Profil complet reçu :", fullProfile); // debug
                         alert("Impossible de trouver l'identifiant du compte.");
                         return;
                       }
@@ -192,6 +192,10 @@ export default function ProfileCard({ user, full = false }) {
                   }
                   try {
                     await setFollowersCount(userId, value);
+                    // Re-fetch profil pour voir la nouvelle valeur
+                    const refreshedProfile = await fetchUserProfile(userProfile.username);
+                    console.log('[BTN] Profil après setFollowersCount:', refreshedProfile);
+                    setUserProfile(refreshedProfile);
                     alert("Compteur modifié !");
                   } catch (err) {
                     alert("Erreur: " + (err?.response?.data?.msg || err.message || err));

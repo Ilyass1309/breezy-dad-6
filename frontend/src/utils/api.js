@@ -115,7 +115,9 @@ export async function loginUser(identifier, password) {
 // =====================
 
 export async function fetchUserProfile(identifier) {
+  console.log('[API] fetchUserProfile appelé avec identifier:', identifier);
   const res = await userClient.get(`/api/users/${identifier}`);
+  console.log('[API] fetchUserProfile réponse:', res.data);
   return res.data;
 }
 

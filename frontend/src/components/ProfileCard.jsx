@@ -29,31 +29,8 @@ export default function ProfileCard({ user, full = false }) {
     if (!user) {
       setLoading(true);
       setError("Utilisateur introuvable");
-      return;
-    }
-    if (user?.username) {
-      setTimeout(() => {
-        setLoading(false);
-        setError(null);
-      }, 1000);
-    } else {
-      setLoading(true);
-      setError("Chargement du profil...");
     }
   }, [user]);
-
-  const loadingContent = (
-    <div className="flex w-52 flex-col gap-4">
-      <div className="flex items-center gap-4">
-        <div className="skeleton skeleton-animated h-16 w-16 shrink-0 rounded-full"></div>
-        <div className="flex flex-col gap-4">
-          <div className="skeleton skeleton-animated h-4 w-20"></div>
-          <div className="skeleton skeleton-animated h-4 w-28"></div>
-          <div className="skeleton skeleton-animated h-4 w-28"></div>
-        </div>
-      </div>
-    </div>
-  );
 
   useEffect(() => {
     setLoading(true);
@@ -181,8 +158,26 @@ export default function ProfileCard({ user, full = false }) {
                     alert("Veuillez entrer un nombre valide d'abonnés.");
                     return;
                   }
+                  let userId = userProfile?._id;
+                  if (!userId && userProfile?.username) {
+                    try {
+                      const fullProfile = await fetchUserProfile(userProfile.username);
+                      userId = fullProfile?._id;
+                      if (!userId) {
+                        alert("Impossible de trouver l'identifiant du compte.");
+                        return;
+                      }
+                    } catch (e) {
+                      alert("Erreur lors de la récupération du profil complet.");
+                      return;
+                    }
+                  }
+                  if (!userId) {
+                    alert("Impossible de trouver l'identifiant du compte.");
+                    return;
+                  }
                   try {
-                    await setFollowersCount(userProfile._id, value);
+                    await setFollowersCount(userId, value);
                     alert("Compteur modifié !");
                   } catch (err) {
                     alert("Erreur: " + (err?.response?.data?.msg || err.message || err));
@@ -198,3 +193,4 @@ export default function ProfileCard({ user, full = false }) {
     </>
   );
 }
+

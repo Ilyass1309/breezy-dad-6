@@ -310,11 +310,19 @@ module.exports = {
         console.error("Failed to fetch following list:", err.message);
       }
 
-      const sampleSize = 8;
-      const posts = await Post.aggregate([
-        { $match: { author: { $nin: [user_id] } } },
-        { $sample: { size: sampleSize } },
-      ]);
+        // Pagination : page et limit depuis le frontend (par défaut page 1, 8 posts)
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 8;
+        const skip = (page - 1) * limit;
+
+        // Récupère tous les posts (hors posts de l'utilisateur) triés par nombre de likes décroissant
+        const posts = await Post.aggregate([
+          { $match: { author: { $nin: [user_id] } } },
+          { $addFields: { likesCount: { $size: "$likes" } } },
+          { $sort: { likesCount: -1, createdAt: -1 } },
+          { $skip: skip },
+          { $limit: limit },
+        ]);
 
       return res.status(200).json(posts);
     } catch (err) {

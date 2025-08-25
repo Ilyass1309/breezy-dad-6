@@ -1,3 +1,8 @@
+// Nouvelle fonction pour la FYP paginée
+export async function fetchFYPWithPagination(page = 1, limit = 8) {
+  const res = await postClient.get(`/api/posts/fyp`, { params: { page, limit } });
+  return res.data;
+}
 // =========================
 // api.js (front, Next.js)
 // =========================

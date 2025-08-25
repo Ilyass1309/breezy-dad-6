@@ -52,9 +52,9 @@ export default function HomePage() {
 
   return (
     <MainLayout>
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-[220px_1fr_320px] gap-8">
-        {/* Main feed */}
-        <div className="min-w-0">
+  <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 min-h-[80vh]">
+  {/* Main feed (occupe tout l'espace restant) */}
+  <div className="min-w-0 w-full">
           <nav className="tabs tabs-bordered mb-4" role="tablist">
             <button
               role="tab"
@@ -85,7 +85,7 @@ export default function HomePage() {
           )}
         </div>
         {/* Right sidebar */}
-        <aside className="hidden lg:block sticky top-20 h-fit">
+        <aside className="hidden lg:block sticky top-20 h-fit w-[320px]">
           <RightSidebar trending={trending} suggestions={suggestions} loading={false} />
         </aside>
       </div>

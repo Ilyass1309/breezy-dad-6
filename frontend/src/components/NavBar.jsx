@@ -13,7 +13,7 @@ import UserAvatar from "./UserAvatar";
 import { fetchUserProfile } from "@/utils/api";
 import MenuItem from "./MenuItem";
 
-const ASIDE_WIDTH = 256; // px
+const ASIDE_WIDTH = 320; // px
 
 export default function NavBar() {
   const { user } = useAuth();
@@ -172,7 +172,7 @@ export default function NavBar() {
       {/* Aside latérale */}
       <aside
         className={clsx(
-          "fixed top-0 left-0 h-full w-64 bg-base-100 shadow-lg z-60",
+          "fixed top-0 left-0 h-full w-80 bg-base-100 shadow-lg z-60",
           "transition-transform duration-300",
           "sm:translate-x-0"
         )}

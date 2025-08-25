@@ -7,7 +7,7 @@ export default function MainLayout({ children }) {
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex">
           {/* Left sidebar: NavBar */}
-          <div className="hidden sm:block flex-shrink-0">
+          <div className="hidden sm:block flex-shrink-0 w-80">
             <NavBar />
           </div>
           {/* Main content */}

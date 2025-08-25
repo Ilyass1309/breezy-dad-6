@@ -1,4 +1,22 @@
-// Composant ZoomableImage pour afficher une image avec bouton zoom (modale)
+import ProfileCard from "./ProfileCard";
+import UserAvatar from "./UserAvatar";
+import LikeButton from "./LikeButton";
+import { likeBreeze, fetchUserProfile, setLikesCount } from "@/utils/api";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/authcontext";
+import { useLocale } from "next-intl";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+export default function Post({ post, link = true }) {
+  const locale = useLocale();
+  const [author, setAuthor] = useState(null);
+  const [likesInput, setLikesInput] = useState(post.likes.length);
+  const { user } = useAuth();
+  const isLiked = user && post.likes && Array.isArray(post.likes) ? post.likes.includes(user.id) : false;
+  const router = useRouter();
+
+  // Composant ZoomableImage pour afficher une image avec bouton zoom (modale)
 const ZoomableImage = ({ url, alt }) => {
   const [open, setOpen] = React.useState(false);
   return (
@@ -41,66 +59,6 @@ const ZoomableImage = ({ url, alt }) => {
     </>
   );
 };
-// Composant ZoomableImage pour afficher une image avec bouton zoom (modale)
-function ZoomableImage({ url, alt }) {
-  const [open, setOpen] = React.useState(false);
-  return (
-    <>
-      <div className="relative w-full max-w-3xl h-[32rem] overflow-hidden rounded-lg shadow-md flex items-center justify-center bg-base-100">
-        <img
-          src={url}
-          alt={alt}
-          className="object-contain w-full h-[32rem] rounded-lg cursor-zoom-in"
-          style={{ maxWidth: '100%', maxHeight: '32rem', objectFit: 'contain', background: 'white' }}
-          onClick={() => setOpen(true)}
-        />
-        <button
-          className="absolute bottom-2 right-2 btn btn-xs btn-primary z-10"
-          onClick={() => setOpen(true)}
-        >
-          Zoom
-        </button>
-      </div>
-      {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
-          onClick={() => setOpen(false)}
-        >
-          <img
-            src={url}
-            alt={alt}
-            className="max-w-full max-h-full shadow-2xl rounded-lg"
-            style={{ background: 'white' }}
-            onClick={e => e.stopPropagation()}
-          />
-          <button
-            className="absolute top-4 right-4 btn btn-sm btn-error"
-            onClick={() => setOpen(false)}
-          >
-            Fermer
-          </button>
-        </div>
-      )}
-    </>
-  );
-}
-import ProfileCard from "./ProfileCard";
-import UserAvatar from "./UserAvatar";
-import LikeButton from "./LikeButton";
-import { likeBreeze, fetchUserProfile, setLikesCount } from "@/utils/api";
-import React, { useEffect, useState } from "react";
-import { useAuth } from "@/contexts/authcontext";
-import { useLocale } from "next-intl";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-
-export default function Post({ post, link = true }) {
-  const locale = useLocale();
-  const [author, setAuthor] = useState(null);
-  const [likesInput, setLikesInput] = useState(post.likes.length);
-  const { user } = useAuth();
-  const isLiked = user && post.likes && Array.isArray(post.likes) ? post.likes.includes(user.id) : false;
-  const router = useRouter();
 
   useEffect(() => {
     async function loadAuthor() {

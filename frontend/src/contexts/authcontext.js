@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { registerUser, loginUser, fetchUserProfile, refreshToken } from "@/utils/api";
 import Cookies from "js-cookie";
-import { bindAuthContext, bindLogout } from '@/utils/api';
+import { bindLogout } from '@/utils/api';
 
 const AuthContext = createContext();
 
@@ -12,7 +12,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    bindAuthContext(setAccessTokenFromApi);
     bindLogout(logout);
   }, []);
 

@@ -17,90 +17,75 @@ exports.ready = (req, res) => {
   });
 };
 
+// ============== REFRESH TOKEN ==============
 exports.refreshToken = async (req, res) => {
-  console.log("[REFRESH] Début refreshToken");
-  const oldRefreshToken = req.cookies.refreshToken;
-  console.log("[REFRESH] Cookie refreshToken reçu:", oldRefreshToken);
-
-  if (!oldRefreshToken) {
-    console.log("[REFRESH] Aucun refreshToken trouvé dans les cookies");
-    return res.status(400).json({ message: "Refresh token is required" });
-  }
-
   try {
+    const oldRefreshToken = req.cookies.refreshToken;
+    if (!oldRefreshToken) {
+      return res.status(400).json({ message: "Refresh token is required" });
+    }
+
     const userServiceURL = process.env.USER_SERVICE_URL;
-    console.log("[REFRESH] USER_SERVICE_URL:", userServiceURL);
 
-    const decoded = jwt.verify(
-      oldRefreshToken,
-      process.env.REFRESH_TOKEN_SECRET
-    );
-    console.log("[REFRESH] RefreshToken décodé:", decoded);
-
+    // Vérifie & décode l'ancien refresh
+    const decoded = jwt.verify(oldRefreshToken, process.env.REFRESH_TOKEN_SECRET);
     const username = decoded.userInfo.username;
     const userId = decoded.userInfo.userId;
-    console.log("[REFRESH] username:", username, "userId:", userId);
 
-    // 1. Vérifie l'ancien refreshToken
-    console.log("[REFRESH] Vérification existence utilisateur côté user-service");
-    const userExists = await axios.get(
-      `${userServiceURL}/api/users/check-username?username=${username}`
+    // Vérifie l'existence utilisateur côté user-service
+    const { data: exists } = await axios.get(
+      `${userServiceURL}/api/users/check-username`,
+      { params: { username } }
     );
-    console.log("[REFRESH] Résultat userExists:", userExists.data);
-
-    if (userExists == false) {
-      console.log("[REFRESH] Utilisateur non trouvé dans user-service");
+    if (!exists) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    // 2. Génère un nouveau accessToken
-    const newAccessToken = jwt.sign({ userId }, process.env.ACCESS_JWT_KEY, {
-      expiresIn: "15m",
-    });
-    console.log("[REFRESH] Nouveau accessToken généré");
-
-    // 3. Génère un nouveau refreshToken (rotation)
-    const newRefreshToken = jwt.sign(
-      {
-        userInfo: {
-          userId: userId,
-          username: username,
-        },
-      },
-      process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "1d" }
+    // Nouveau access (15 min)
+    const newAccessToken = jwt.sign(
+      { userId, username },
+      process.env.ACCESS_JWT_KEY,
+      { expiresIn: "15m" }
     );
-    console.log("[REFRESH] Nouveau refreshToken généré");
 
-    // 4. Remplace dans la base (remplace l'ancien)
-    console.log("[REFRESH] Stockage du nouveau refreshToken côté user-service");
+    // Rotation refresh (7 jours)
+    const newRefreshToken = jwt.sign(
+      { userInfo: { userId, username } },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // Stocke le nouveau refresh côté user-service
     await axios.post(`${userServiceURL}/api/users/${userId}/refreshTokens`, {
       refreshToken: newRefreshToken,
     });
-    console.log("[REFRESH] Nouveau refreshToken stocké côté user-service");
 
-    // 5. Met à jour le cookie
+    // Pose les cookies (⚠️ mêmes options partout : sameSite 'none', path)
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/api",
+      maxAge: 15 * 60 * 1000,
+    });
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
-      secure: true, // true en prod HTTPS
-      sameSite: "None",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+      secure: true,
+      sameSite: "none",
+      path: "/api/auth",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    console.log("[REFRESH] Cookie refreshToken mis à jour");
 
-    // 6. Réponse au client
-    console.log("[REFRESH] Fin refreshToken - succès");
-    return res.status(200).json({ accessToken: newAccessToken });
+    return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error("[REFRESH] Erreur:", err.message);
-    return res
-      .status(403)
-      .json({ message: "Invalid or expired refresh token" });
+    console.error("[REFRESH] Error:", err.message);
+    // 403 si token invalide/expiré
+    return res.status(403).json({ message: "Invalid or expired refresh token" });
   }
 };
 
+// ============== REGISTER ==============
 exports.register = async (req, res) => {
-
   try {
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);
 
@@ -112,61 +97,56 @@ exports.register = async (req, res) => {
     };
 
     const userServiceURL = process.env.USER_SERVICE_URL;
-    console.log("[AUTH-SERVICE] USER_SERVICE_URL:", userServiceURL);
 
-    // Création du user côté user-service
+    // Création user côté user-service
     const { data: user } = await axios.post(
       `${userServiceURL}/api/users`,
       userPayload,
       { timeout: 15000 }
     );
 
-    // Génération de tokens
+    // Tokens
     const accessToken = jwt.sign(
-      {
-        userId: user.userId,
-        username: user.username,
-      },
+      { userId: user.userId, username: user.username },
       process.env.ACCESS_JWT_KEY,
-      { expiresIn: "10s" } // Token court (10 s)
+      { expiresIn: "10m" } // ← 10 minutes (au lieu de 10s)
     );
 
     const refreshToken = jwt.sign(
-      {
-        userInfo: {
-          userId: user.userId,
-          username: user.username,
-        },
-      },
+      { userInfo: { userId: user.userId, username: user.username } },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "7d" }
     );
 
-    // Stocker le refreshToken côté user-service
+    // Stocke refresh côté user-service
     await axios.post(
       `${userServiceURL}/api/users/${user.userId}/refreshTokens`,
       { refreshToken }
     );
 
+    // Cookies
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/api",
+      maxAge: 15 * 60 * 1000,
+    });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true, // obligatoire en HTTPS (Vercel/Render)
-      sameSite: "None", // autorise le cross-site
-      maxAge: 7 * 24 * 60 * 60 * 1000, // durée de vie 7 jours
+      secure: true,
+      sameSite: "none",
+      path: "/api/auth",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(201).json({
       msg: "New User created!",
-      accessToken,
       userId: user.userId,
     });
   } catch (err) {
     if (err.response) {
-      console.error(
-        "user-service responded with:",
-        err.response.status,
-        err.response.data
-      );
+      console.error("user-service responded with:", err.response.status, err.response.data);
       return res.status(err.response.status).json({
         error: err.response.data.error || "user-service rejected the request",
       });
@@ -177,103 +157,89 @@ exports.register = async (req, res) => {
   }
 };
 
-// LOGIN : demande les données à user-service
+// ============== LOGIN ==============
 exports.login = async (req, res) => {
   try {
-    console.log("[LOGIN] Début de la fonction login");
     const { identifier, password } = req.body;
-    console.log("[LOGIN] Corps de la requête:", req.body);
-
     if (!identifier || !password) {
-      console.log("[LOGIN] Identifiant ou mot de passe manquant");
-      return res
-        .status(400)
-        .json({ message: "Missing identifier or password" });
+      return res.status(400).json({ message: "Missing identifier or password" });
     }
 
     const userServiceURL = process.env.USER_SERVICE_URL;
-    console.log("[LOGIN] USER_SERVICE_URL:", userServiceURL);
 
-    // Récupération des infos utilisateur pour login
-    console.log("[LOGIN] Appel à:", `${userServiceURL}/api/users/auth-data`, "avec identifier:", identifier);
+    // Récupère les données d'auth (hashedPassword, id, username)
     const { data: user } = await axios.get(
       `${userServiceURL}/api/users/auth-data`,
       { params: { identifier } }
     );
-    console.log("[LOGIN] Données utilisateur reçues:", user);
 
     const isPasswordValid = bcrypt.compareSync(password, user.hashedPassword);
-    console.log("[LOGIN] Résultat comparaison mot de passe:", isPasswordValid);
     if (!isPasswordValid) {
-      console.log("[LOGIN] Mot de passe invalide");
-      return res
-        .status(401)
-        .json({ message: "Invalid email/username or password" });
+      return res.status(401).json({ message: "Invalid email/username or password" });
     }
 
-    // Création du accessToken court (10 min)
+    // Tokens
     const accessToken = jwt.sign(
       { userId: user.id, username: user.username },
       process.env.ACCESS_JWT_KEY,
       { expiresIn: "10m" }
     );
-    console.log("[LOGIN] accessToken généré");
 
     const refreshToken = jwt.sign(
-      {
-        userInfo: {
-          userId: user.id,
-          username: user.username,
-        },
-      },
+      { userInfo: { userId: user.id, username: user.username } },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "7d" }
     );
-    console.log("[LOGIN] refreshToken généré");
 
-    // Stocker le refreshToken côté user-service
-    console.log("[LOGIN] Stockage du refreshToken côté user-service");
+    // Stocke refresh côté user-service
     await axios.post(`${userServiceURL}/api/users/${user.id}/refreshTokens`, {
       refreshToken,
     });
-    console.log("[LOGIN] refreshToken stocké côté user-service");
 
+    // Cookies
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/api",
+      maxAge: 15 * 60 * 1000,
+    });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true, // obligatoire en HTTPS (Vercel/Render)
-      sameSite: "None", // autorise le cross-site
-      maxAge: 7 * 24 * 60 * 60 * 1000, // durée de vie 7 jours
+      secure: true,
+      sameSite: "none",
+      path: "/api/auth",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    console.log("[LOGIN] Cookie refreshToken envoyé");
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "You are now connected!",
-      accessToken,
       userId: user.id,
     });
-    console.log("[LOGIN] Fin de la fonction login - succès");
   } catch (err) {
     if (err.response && err.response.status === 404) {
-      console.log("[LOGIN] Utilisateur non trouvé (404)");
-      return res
-        .status(401)
-        .json({ message: "Invalid email/username or password" });
+      return res.status(401).json({ message: "Invalid email/username or password" });
     }
-    console.error("[LOGIN] Erreur:", err.message);
-    return res.status(500).json({ message: "Internal server error", err });
+    console.error("[LOGIN] Error:", err.message);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// AUTHENTICATE : vérifie le token JWT
+// ============== VERIFY TOKEN ==============
+// Lit d'abord le cookie accessToken ; fallback sur Authorization si présent
 exports.verifyToken = (req, res) => {
-  const authHeader = req.headers["authorization"];
+  let token = req.cookies?.accessToken;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "No token provided" });
+  if (!token) {
+    const authHeader = req.headers["authorization"];
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.slice(7);
+    }
   }
 
-  const token = authHeader.slice(7); // Enlève "Bearer "
-  console.log(token);
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.ACCESS_JWT_KEY);
@@ -283,9 +249,9 @@ exports.verifyToken = (req, res) => {
   }
 };
 
+// ============== LOGOUT ==============
 exports.logout = async (req, res) => {
   const { userId } = req.body;
-
   if (!userId) {
     return res.status(400).json({ message: "Missing user ID" });
   }
@@ -293,14 +259,21 @@ exports.logout = async (req, res) => {
   try {
     const userServiceURL = process.env.USER_SERVICE_URL;
 
-    // Appel au user-service pour supprimer le refresh token stocké
+    // Supprime le refresh côté user-service
     await axios.delete(`${userServiceURL}/api/users/${userId}/refreshTokens`);
 
-    // Suppression du cookie côté client
+    // Efface les cookies (mêmes options + path)
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/api",
+    });
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      secure: true, // obligatoire en HTTPS (Vercel/Render)
-      sameSite: "None", // autorise le cross-site
+      secure: true,
+      sameSite: "none",
+      path: "/api/auth",
     });
 
     return res.status(200).json({ message: "Successfully logged out" });

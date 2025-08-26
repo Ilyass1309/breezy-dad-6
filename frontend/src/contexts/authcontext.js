@@ -1,115 +1,100 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
-import { registerUser, loginUser, fetchUserProfile, refreshToken } from "@/utils/api";
+import { registerUser, loginUser, fetchUserProfile } from "@/utils/api";
+import { api } from "@/utils/api"; // axios { baseURL:'/api', withCredentials:true }
 import Cookies from "js-cookie";
-import { bindLogout } from '@/utils/api';
+import { bindLogout } from "@/utils/api";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [accessToken, setAccessToken] = useState(null);
-  const [identifier, setIdentifier] = useState(null);
-  const [user, setUser] = useState(null);
+  const [identifier, setIdentifier] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     bindLogout(logout);
   }, []);
 
+  // Au montage : tenter un refresh (le cookie refreshToken HttpOnly sera envoyé automatiquement)
   useEffect(() => {
-    // Vérifie si un token est stocké dans les cookies
-    const token = Cookies.get("accessToken");
-    const storedIdentifier = Cookies.get("userId");
-    if (token) {
-      setAccessToken(token);
-      setIdentifier(storedIdentifier);
-    }
+    (async () => {
+      try {
+        // si refresh OK, le back repose un accessToken en cookie
+        await api.post("/auth/refresh-token", {});
+        // récupère un identifiant d’utilisateur pour charger le profil
+        // (si tu gardes un cookie non-HttpOnly "userId")
+        const storedIdentifier = Cookies.get("userId") || null;
+        setIdentifier(storedIdentifier);
+      } catch {
+        // pas connecté => laisser identifier à null
+        setIdentifier(null);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  // Met à jour l'état de l'utilisateur si le token change
+  // Charger le profil quand on a un identifier
   useEffect(() => {
-    const fetchUser = async () => {
-      if (identifier) {
-        try {
-          const userProfile = await fetchUserProfile(identifier);
-          setUser(userProfile);
-        } catch (err) {
-          console.error("Error fetching user profile:", err);
-          setUser(null);
-        }
-      } else {
+    const run = async () => {
+      if (!identifier) {
+        setUser(null);
+        return;
+      }
+      try {
+        const profile = await fetchUserProfile(identifier);
+        setUser(profile);
+      } catch (err) {
+        console.error("Error fetching user profile:", err);
         setUser(null);
       }
     };
-    fetchUser();
+    run();
   }, [identifier]);
-
-  const setAccessTokenFromApi = (newAccessToken) => {
-    setAccessToken(newAccessToken);
-    Cookies.set("accessToken", newAccessToken, {
-          secure: true,
-          sameSite: "strict",
-          expires: 7,
-        });
-  }
 
   // — Inscription
   const register = async (email, username, password) => {
-    try {
-      const data = await registerUser(email, username, password);
-      // Le backend renvoie `accessToken`
-      const token = data.accessToken;
-      const id = data.userId;
-      if (!token) throw new Error("Aucun token reçu à l'inscription");
-      setAccessToken(token);
+    const data = await registerUser(email, username, password);
+    // le back doit poser les cookies; on récupère éventuellement l'id pour charger le profil
+    const id = data?.userId;
+    if (id) {
+      Cookies.set("userId", id, { secure: true, sameSite: "strict", expires: 7 });
       setIdentifier(id);
-    } catch (err) {
-      console.error("Register error:", err);
-      throw new Error(err.response?.data?.error || err.message);
     }
   };
 
   // — Connexion
-  const login = async (identifier, password, rememberMe = false) => {
-    try {
-      const data = await loginUser(identifier, password);
-      const token = data.accessToken;
-      const id = data.userId;
-      if (!token) throw new Error("Aucun token reçu à la connexion");
-      setAccessToken(token);
-      setIdentifier(id);
+  const login = async (idOrEmail, password, rememberMe = false) => {
+    const data = await loginUser(idOrEmail, password);
+    // le back POSE les cookies (access+refresh). Ici, on ne lit pas d'accessToken.
+    const id = data?.userId;
+    if (id) {
       if (rememberMe) {
-        // Stocke le token et l'identifiant dans un cookie sécurisé
-        Cookies.set("accessToken", token, {
-          secure: true,
-          sameSite: "strict",
-          expires: 7,
-        });
-        Cookies.set("userId", id, {
-          secure: true,
-          sameSite: "strict",
-          expires: 7,
-        });
+        Cookies.set("userId", id, { secure: true, sameSite: "strict", expires: 7 });
       } else {
-        Cookies.remove("accessToken");
-        Cookies.remove("userId");
+        Cookies.set("userId", id, { secure: true, sameSite: "strict" }); // cookie de session
       }
-    } catch (err) {
-      console.error("Login error:", err);
-      throw new Error(err.response?.data?.message || err.message);
+      setIdentifier(id);
+    } else {
+      // si ton back ne renvoie pas l'id, préfère une route /auth/me côté back
+      // ou renvoie-le dans la réponse de login
+      console.warn("userId manquant dans la réponse de login");
     }
   };
 
-  const logout = () => {
-    setAccessToken(null);
+  const logout = async () => {
+    try {
+      // si tu as une route pour nettoyer les cookies côté serveur
+      await api.post("/auth/logout", {});
+    } catch {}
     setIdentifier(null);
-    Cookies.remove("accessToken");
+    setUser(null);
     Cookies.remove("userId");
   };
 
   return (
-    <AuthContext.Provider
-      value={{ accessToken, user, setUser, register, login, logout }}
-    >
+    <AuthContext.Provider value={{ user, loading, register, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

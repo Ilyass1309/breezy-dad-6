@@ -26,6 +26,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Auth Service is running on port ${port}`);
   swaggerDocs(app, port);
 });

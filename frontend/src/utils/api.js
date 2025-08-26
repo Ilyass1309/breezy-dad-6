@@ -42,12 +42,12 @@ api.interceptors.response.use(
 // =====================
 
 export async function registerUser(email, username, password) {
-  const { data } = await authClient.post("/auth/register", { email, username, password });
+  const { data } = await api.post("/auth/register", { email, username, password });
   return data; // { msg, accessToken }
 }
 
 export async function loginUser(identifier, password) {
-  const { data } = await authClient.post("/auth/login", { identifier, password });
+  const { data } = await api.post("/auth/login", { identifier, password });
   return data; // { accessToken, ... }
 }
 
@@ -57,45 +57,45 @@ export async function loginUser(identifier, password) {
 
 export async function fetchUserProfile(identifier) {
   console.log('[API] fetchUserProfile appelé avec identifier:', identifier);
-  const res = await userClient.get(`/users/${identifier}`);
+  const res = await api.get(`/users/${identifier}`);
   console.log('[API] fetchUserProfile réponse:', res.data);
   return res.data;
 }
 
 export async function fetchUserFollowing(userId) {
-  const res = await userClient.get(`/users/${userId}/following`);
+  const res = await api.get(`/users/${userId}/following`);
   return res.data;
 }
 
 export async function fetchUserFollowers(userId) {
-  const res = await userClient.get(`/users/${userId}/followers`);
+  const res = await api.get(`/users/${userId}/followers`);
   return res.data;
 }
 
 export async function fetchUserFriends(userId, token) {
-  const res = await userClient.get(`/users/${userId}/friends`, {
+  const res = await api.get(`/users/${userId}/friends`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 }
 
 export async function fetchUsersByUsername(query) {
-  const res = await userClient.get(`/users/search`, { params: { query } });
+  const res = await api.get(`/users/search`, { params: { query } });
   return res.data;
 }
 
 export async function followUser(targetUserId) {
-  const res = await userClient.post(`/friend-requests/follow/${targetUserId}`, {});
+  const res = await api.post(`/friend-requests/follow/${targetUserId}`, {});
   return res.data;
 }
 
 export async function unfollowUser(targetUserId) {
-  const res = await userClient.post(`/friend-requests/unfollow/${targetUserId}`, {});
+  const res = await api.post(`/friend-requests/unfollow/${targetUserId}`, {});
   return res.data;
 }
 
 export async function updateUserProfile(bio, avatar, token) {
-  const res = await userClient.patch(
+  const res = await api.patch(
     `/users/`,
     { bio, avatar },
     { headers: { Authorization: `Bearer ${token}` } }
@@ -108,29 +108,29 @@ export async function updateUserProfile(bio, avatar, token) {
 // =====================
 
 export async function fetchFYPWithPagination(page = 1, limit = 8) {
-  const res = await postClient.get(`/posts/fyp`, { params: { page, limit } });
+  const res = await api.get(`/posts/fyp`, { params: { page, limit } });
   return res.data;
 }
 
 export async function fetchUserPosts(userId) {
-  const res = await postClient.get(`/posts/byuser/${userId}`);
+  const res = await api.get(`/posts/byuser/${userId}`);
   return res.data;
 }
 
 export async function fetchUserFeed() {
-  const res = await postClient.get(`/posts/feed`);
+  const res = await api.get(`/posts/feed`);
   return res.data;
 }
 
 export async function fetchFYP() {
-  const res = await postClient.get(`/posts/fyp`);
+  const res = await api.get(`/posts/fyp`);
   return res.data;
 }
 
 export async function postBreeze(text, tags, imageUrl) {
   // On envoie mediaUrls comme tableau si imageUrl existe, sinon tableau vide
   const mediaUrls = imageUrl ? [imageUrl] : [];
-  const res = await postClient.post(`/posts/`, { content: text, tags, mediaUrls });
+  const res = await api.post(`/posts/`, { content: text, tags, mediaUrls });
   return res.data;
 }
 
@@ -138,57 +138,57 @@ export async function likeBreeze(setLiked, postID, token) {
   const path = setLiked
     ? `/posts/likes/posts/${postID}/like`
     : `/posts/likes/posts/${postID}/unlike`;
-  const res = await postClient.post(path, {}, { headers: { Authorization: `Bearer ${token}` } });
+  const res = await api.post(path, {}, { headers: { Authorization: `Bearer ${token}` } });
   return res.data;
 }
 
 export async function fetchTaggedPosts(tag) {
-  const res = await postClient.get(`/posts/search/popular`, { params: { tag } });
+  const res = await api.get(`/posts/search/popular`, { params: { tag } });
   return res.data;
 }
 
 export async function fetchPost(postId) {
-  const res = await postClient.get(`/posts/${postId}`);
+  const res = await api.get(`/posts/${postId}`);
   return res.data;
 }
 
 export async function fetchPostComments(postId) {
-  const res = await postClient.get(`/posts/${postId}/comments`);
+  const res = await api.get(`/posts/${postId}/comments`);
   return res.data;
 }
 
 export async function addCommentToPost(postId, comment_content) {
-  const res = await postClient.post(`/posts/${postId}/comments`, { content: comment_content });
+  const res = await api.post(`/posts/${postId}/comments`, { content: comment_content });
   return res;
 }
 
 export async function updateComment(postId, commentId, new_content) {
-  const res = await postClient.put(`/posts/${postId}/comments/${commentId}`, { content: new_content });
+  const res = await api.put(`/posts/${postId}/comments/${commentId}`, { content: new_content });
   return res;
 }
 
 export async function deleteComment(postId, commentId) {
-  const res = await postClient.delete(`/posts/${postId}/comments/${commentId}`);
+  const res = await api.delete(`/posts/${postId}/comments/${commentId}`);
   return res;
 }
 
 export async function getCommentReplies(postId, commentId) {
-  const res = await postClient.get(`/posts/${postId}/comments/${commentId}/replies`);
+  const res = await api.get(`/posts/${postId}/comments/${commentId}/replies`);
   return res.data;
 }
 
 export async function getCommentRepliesCount(postId, commentId) {
-  const res = await postClient.get(`/posts/${postId}/comments/${commentId}/repliesCount`);
+  const res = await api.get(`/posts/${postId}/comments/${commentId}/repliesCount`);
   return res;
 }
 
 export async function likeComment(commentId) {
-  const res = await postClient.post(`/posts/likes/comments/${commentId}/like`, {});
+  const res = await api.post(`/posts/likes/comments/${commentId}/like`, {});
   return res.data;
 }
 
 export async function unlikeComment(commentId) {
-  const res = await postClient.post(`/posts/likes/comments/${commentId}/unlike`, {});
+  const res = await api.post(`/posts/likes/comments/${commentId}/unlike`, {});
   return res.data;
 }
 
@@ -197,37 +197,37 @@ export async function unlikeComment(commentId) {
 // =====================
 
 export async function fetchUserMessages() {
-  const res = await msgClient.get(`/messages/inbox`);
+  const res = await api.get(`/messages/inbox`);
   return res.data;
 }
 
 export async function fetchMessageById(messageId) {
-  const res = await msgClient.get(`/messages/${messageId}`);
+  const res = await api.get(`/messages/${messageId}`);
   return res.data;
 }
 
 export async function sendMessage(receiverId, content) {
-  const res = await msgClient.post(`/messages/send`, { receiver: receiverId, content });
+  const res = await api.post(`/messages/send`, { receiver: receiverId, content });
   return res.data;
 }
 
 export async function getConversations(userId) {
-  const res = await msgClient.get(`/messages/conversations/${userId}`);
+  const res = await api.get(`/messages/conversations/${userId}`);
   return res.data;
 }
 
 export async function deleteMessage(messageId) {
-  const res = await msgClient.delete(`/messages/${messageId}`);
+  const res = await api.delete(`/messages/${messageId}`);
   return res.data;
 }
 
 export async function editMessage(messageId, content) {
-  const res = await msgClient.patch(`/messages/${messageId}`, { content });
+  const res = await api.patch(`/messages/${messageId}`, { content });
   return res.data;
 }
 
 export async function markConversationAsRead(userId, token) {
-  return msgClient.post(
+  return api.post(
     `/messages/conversations/${userId}/read`,
     {},
     { headers: { Authorization: `Bearer ${token}` } }
@@ -239,21 +239,21 @@ export async function markConversationAsRead(userId, token) {
 // =====================
 
 export async function fetchNotifications(token) {
-  const res = await notifClient.get(`/notifications`, {
+  const res = await api.get(`/notifications`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 }
 
 export async function getNotificationCount(token) {
-  const res = await notifClient.get(`/notifications/count`, {
+  const res = await api.get(`/notifications/count`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 }
 
 export async function readAndUpdateNotification(notificationId, token) {
-  const res = await notifClient.patch(
+  const res = await api.patch(
     `/notifications/${notificationId}`,
     {},
     { headers: { Authorization: `Bearer ${token}` } }
@@ -262,7 +262,7 @@ export async function readAndUpdateNotification(notificationId, token) {
 }
 
 export async function readAndDeleteNotification(notificationId, token) {
-  const res = await notifClient.delete(`/notifications/${notificationId}`, {
+  const res = await api.delete(`/notifications/${notificationId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
@@ -270,10 +270,10 @@ export async function readAndDeleteNotification(notificationId, token) {
 
 // Pour followers (user-service)
 export async function setFollowersCount(userId, count) {
-  await userClient.post(`/admin/set-followers`, { userId, count });
+  await api.post(`/admin/set-followers`, { userId, count });
 }
 
 // Pour likes (post-service)
 export async function setLikesCount(postId, count) {
-  await postClient.post(`/admin/set-likes`, { postId, count });
+  await api.post(`/admin/set-likes`, { postId, count });
 }

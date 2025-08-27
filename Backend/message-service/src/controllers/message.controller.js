@@ -35,7 +35,7 @@ exports.sendMessage = async (req, res) => {
 
     res.status(201).json({ message: "Message sent", messageId: message._id });
   } catch (err) {
-    console.error("Error sending message:", err);
+    
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -73,7 +73,7 @@ exports.getInbox = async (req, res) => {
 
     return res.status(200).json(conversations);
   } catch (err) {
-    console.error("Error fetching conversations:", err);
+    
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -101,7 +101,7 @@ exports.deleteMessage = async (req, res) => {
 
     return res.status(200).json({ message: "Message deleted successfully" });
   } catch (err) {
-    console.error("Error deleting message:", err);
+    
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -154,7 +154,7 @@ exports.editMessage = async (req, res) => {
 
     return res.status(200).json({ message: "Message updated successfully" });
   } catch (err) {
-    console.error("Error editing message:", err);
+    
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -182,7 +182,7 @@ exports.getMessageById = async (req, res) => {
     // Retourner directement l'objet message (toObject pour enlever les méthodes Mongoose)
     return res.status(200).json(message.toObject());
   } catch (err) {
-    console.error("Error fetching message by ID:", err);
+    
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -203,7 +203,7 @@ exports.getConversations = async (req, res) => {
 
     return res.status(200).json(messages);
   } catch (err) {
-    console.error("Error fetching messages by user:", err);
+    
     return res.status(500).json({ message: "Internal server error" });
   }
 };

@@ -7,13 +7,13 @@ const verifyJWT = async (req, res, next) => {
   let authHeader = req.headers['authorization'];
   if (!authHeader && req.cookies?.accessToken) {
     authHeader = 'Bearer ' + req.cookies.accessToken;
-    console.log('[verifyJWT] Token récupéré depuis cookie accessToken');
+  // log removed
   }
 
-  console.log('[verifyJWT] Authorization header (final):', authHeader);
+  // log removed
 
   if (!authHeader) {
-    console.warn('[verifyJWT] Aucun token trouvé (ni header ni cookie)');
+  // log removed
     return res.status(401).json({ message: 'Authorization header missing' });
   }
 
@@ -25,7 +25,7 @@ const verifyJWT = async (req, res, next) => {
       headers: { Authorization: authHeader },
     });
 
-    console.log('[verifyJWT] Auth-service /auth/verify response:', response.data);
+  // log removed
 
     // Stocke les infos utilisateur pour la suite
     req.user = response.data.user;
@@ -33,7 +33,7 @@ const verifyJWT = async (req, res, next) => {
 
     next(); // continue
   } catch (err) {
-    console.error('[verifyJWT] Error verifying JWT:', err.response ? err.response.data : err.message);
+  // log removed
     return res.status(401).json({ message: 'Unauthorized', details: err.response ? err.response.data : err.message });
   }
 };

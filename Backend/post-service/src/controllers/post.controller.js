@@ -94,7 +94,7 @@ module.exports = {
           }
         );
       } catch (notifyErr) {
-        console.error("Failed to notify followers:", notifyErr.message);
+        
         // Ne bloque pas la création du post en cas d'erreur de notif
       }
 
@@ -184,7 +184,7 @@ module.exports = {
 
       return res.status(200).json(posts);
     } catch (err) {
-      console.error("Error searching recent posts by tag:", err);
+      
       return res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -211,7 +211,7 @@ module.exports = {
 
       return res.status(200).json(posts);
     } catch (err) {
-      console.error("Error searching most liked posts by tag:", err);
+      
       return res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -264,7 +264,7 @@ module.exports = {
       const postIds = posts.map((post) => post._id);
       return res.status(200).json(postIds);
     } catch (err) {
-      console.error("Error searching popular posts by tag:", err);
+      
       return res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -307,7 +307,7 @@ module.exports = {
         );
         followingIds = response.data.following || [];
       } catch (err) {
-        console.error("Failed to fetch following list:", err.message);
+        
       }
 
         // Pagination : page et limit depuis le frontend (par défaut page 1, 8 posts)
@@ -326,7 +326,7 @@ module.exports = {
 
       return res.status(200).json(posts);
     } catch (err) {
-      console.error("Error generating For You feed (random):", err);
+      
       return res.status(500).json({ message: "Internal server error" });
     }
   },

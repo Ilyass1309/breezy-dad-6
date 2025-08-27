@@ -78,8 +78,8 @@ export default function MessagesPage() {
           })
         );
         setConversations(formattedConversations);
-      } catch (error) {
-        console.error("Failed to fetch messages:", error);
+  } catch (error) {
+        
       } finally {
         setTimeout(() => {
           setLoading(false);

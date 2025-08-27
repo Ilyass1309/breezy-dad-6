@@ -2,30 +2,23 @@ const User = require("../models/user.model");
 
 // Contrôleur pour /auth-data
 exports.getAuthData = async (req, res) => {
-  console.log("[USER-AUTH] Début getAuthData");
   const identifier = req.query.identifier;
-  console.log("[USER-AUTH] Query identifier:", identifier);
 
   if (!identifier) {
-    console.log("[USER-AUTH] Identifiant manquant");
     return res
       .status(400)
       .json({ error: "Missing identifier (email or username)" });
   }
 
   try {
-    console.log("[USER-AUTH] Recherche utilisateur dans la base...");
     const user = await User.findOne({
       $or: [{ email: identifier }, { username: identifier }],
     });
-    console.log("[USER-AUTH] Résultat de la recherche:", user ? user._id : null);
 
-    if (!user) {
-      console.log("[USER-AUTH] Utilisateur non trouvé");
+  if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    console.log("[USER-AUTH] Utilisateur trouvé, envoi des données auth");
     return res.status(200).json({
       id: user._id,
       email: user.email,
@@ -34,7 +27,6 @@ exports.getAuthData = async (req, res) => {
       followersCount: user.followers.length,
     });
   } catch (err) {
-    console.error("[USER-AUTH] Erreur dans /auth-data:", err);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -67,7 +59,6 @@ exports.createUser = async (req, res) => {
       return res.status(400).json({ error: `${field} already exists` });
     }
 
-    console.error("Error creating user:", err);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -76,7 +67,6 @@ exports.storeRefreshToken = async (req, res) => {
   const { userId } = req.params;
   const { refreshToken } = req.body;
 
-  console.log(userId);
 
   if (!refreshToken) {
     return res.status(400).json({ message: "Missing refresh token" });
@@ -91,7 +81,6 @@ exports.storeRefreshToken = async (req, res) => {
 
     return res.status(200).json({ message: "Refresh token stored" });
   } catch (err) {
-    console.error("Failed to store refresh token:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -112,7 +101,6 @@ exports.validateRefreshToken = async (req, res) => {
 
     return res.status(200).json({ message: "Refresh token is valid" });
   } catch (err) {
-    console.error("Failed to validate refresh token:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -129,7 +117,6 @@ exports.revokeRefreshToken = async (req, res) => {
 
     return res.status(200).json({ message: "Refresh token revoked" });
   } catch (err) {
-    console.error("Failed to revoke refresh token:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -145,7 +132,6 @@ exports.isUsernameTaken = async (req, res) => {
     const existingUser = await User.findOne({ username });
     return res.status(200).json({ taken: !!existingUser });
   } catch (err) {
-    console.error("Error checking username:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -160,16 +146,12 @@ exports.searchUsersByUsername = async (req, res) => {
   try {
     const regex = new RegExp(query.trim(), "i");
 
-    console.log("Requête utilisateur :", query);
     const users = await User.find({ username: { $regex: regex } })
       .select("username avatar _id")
       .limit(20);
 
-    console.log("Utilisateurs trouvés :", users.length);
-
     return res.status(200).json(users);
   } catch (err) {
-    console.error("Error searching users:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -199,7 +181,6 @@ exports.updateUserProfile = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error updating profile:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

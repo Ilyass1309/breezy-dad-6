@@ -28,10 +28,8 @@ export default function LoginForm() {
     setLoading(true);
 
     try {
-      await login(identifier, password, rememberMe);
-      console.log('[LOGIN] Avant router.push', searchParams.get("from") || "/home");
-      router.push(searchParams.get("from") || "/home");
-      console.log('[LOGIN] Après router.push');
+  await login(identifier, password, rememberMe);
+  router.push(searchParams.get("from") || "/home");
     } catch (error) {
       setError(error.message || "auth failed");
     } finally {

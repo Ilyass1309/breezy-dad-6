@@ -21,7 +21,7 @@ swaggerDocs(app, port);
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log("Connected to MongoDB for Post Service");
+  // log removed
 
     app.use("/api/posts", require("./src/routes/post.routes.js"));
     app.use(
@@ -36,11 +36,11 @@ mongoose
     app.use('/api/admin', require('./src/routes/admin.routes'));
 
     app.listen(port, () => {
-      console.log("Post Service is running on port", port);
+  // log removed
     });
   })
   .catch((err) => {
-    console.error("Error connecting to MongoDB for Post Service:", err);
+  // log removed
     app.use("/", (req, res) => {
       return res
         .status(500)
@@ -48,6 +48,6 @@ mongoose
     });
 
     app.listen(port, () => {
-      console.log("Post Service is running on port", port);
+  // log removed
     });
   });

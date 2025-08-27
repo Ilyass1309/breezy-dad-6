@@ -89,7 +89,7 @@ export default function CommentExpander({ postId }) {
         setEditingCommentId(null);
       }
     } catch (error) {
-      console.error("Erreur lors de la suppression du commentaire", error);
+      
     }
   };
 

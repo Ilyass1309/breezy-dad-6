@@ -21,7 +21,7 @@ export default function NotificationsPage() {
         const data = await fetchNotifications(accessToken);
         setNotifications(data);
       } catch (err) {
-        console.error(err);
+        
       } finally {
         setLoading(false);
       }
@@ -36,7 +36,7 @@ export default function NotificationsPage() {
         router.push(notification.link);
       }
     } catch (err) {
-      console.error("Erreur lors de la suppression de la notification :", err);
+      
       if (notification.link) {
         router.push(notification.link);
       }

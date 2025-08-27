@@ -22,7 +22,7 @@ exports.createNotification = async (req, res) => {
       .status(201)
       .json({ message: "Notification created", id: notification._id });
   } catch (err) {
-    console.error("Error creating notification:", err);
+    
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -38,7 +38,7 @@ exports.getUserNotifications = async (req, res) => {
 
     return res.status(200).json(notifications);
   } catch (err) {
-    console.error("Error fetching notifications:", err);
+    
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -51,7 +51,7 @@ exports.getNotificationCount = async (req, res) => {
     const count = await Notification.countDocuments({ userId });
     res.status(200).json({ count });
   } catch (error) {
-    console.error("Error counting notifications:", error);
+    
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -69,7 +69,7 @@ exports.readAndDelete = async (req, res) => {
 
     res.status(200).json({ message: "Notification read and deleted" });
   } catch (error) {
-    console.error("Error deleting notification:", error);
+    
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -93,7 +93,7 @@ exports.readAllAndDelete = async (req, res) => {
       notifications,
     });
   } catch (error) {
-    console.error("Error deleting notifications:", error);
+    
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -132,7 +132,7 @@ exports.onPostCreated = async (req, res) => {
 
     return res.status(201).json({ message: "Notifications sent to followers" });
   } catch (err) {
-    console.error("Error in onPostCreated:", err.message);
+    
     return res.status(500).json({ message: "Failed to notify followers" });
   }
 };
@@ -156,7 +156,7 @@ exports.readAndUpdate = async (req, res) => {
       .status(200)
       .json({ message: "Notification read and updated", notification });
   } catch (error) {
-    console.error("Error updating notification:", error);
+    
     res.status(500).json({ message: "Internal server error" });
   }
 };

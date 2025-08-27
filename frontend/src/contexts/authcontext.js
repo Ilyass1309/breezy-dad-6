@@ -51,18 +51,14 @@ export const AuthProvider = ({ children }) => {
   // Charger le profil quand on a un identifier
   useEffect(() => {
     const run = async () => {
-      if (!identifier) {
-        console.log('[AUTH] useEffect: Pas d\'identifier, utilisateur déconnecté');
+  if (!identifier) {
         setUser(null);
         return;
       }
       try {
-        console.log('[AUTH] useEffect: fetchUserProfile appelé avec identifier:', identifier);
         const profile = await fetchUserProfile(identifier);
-        console.log('[AUTH] useEffect: fetchUserProfile réponse:', profile);
         setUser(profile);
       } catch (err) {
-        console.error('[AUTH] useEffect: Erreur lors de la récupération du profil utilisateur:', err);
         setUser(null);
         const status = err?.response?.status;
         if (status === 401 || status === 404) {
@@ -87,15 +83,12 @@ export const AuthProvider = ({ children }) => {
 
   // — Connexion
   const login = async (idOrEmail, password, rememberMe = false) => {
-    console.log('[AUTH] login() called with:', { idOrEmail, password, rememberMe });
     const data = await loginUser(idOrEmail, password);
-    console.log('[AUTH] loginUser response:', data);
     // le back POSE les cookies (access+refresh) et maintenant renvoie aussi accessToken
     if (data?.accessToken) {
       const token = data.accessToken;
       setAccessToken(token);
       api.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-      console.log('[AUTH] Authorization header set globally');
       if (!identifier) {
         const payload = safeDecodeJwt(token);
         if (payload?.userId) {
@@ -108,17 +101,13 @@ export const AuthProvider = ({ children }) => {
     if (id) {
       if (rememberMe) {
         Cookies.set("userId", id, { secure: true, sameSite: "strict", expires: 7 });
-        console.log('[AUTH] userId cookie set (persistent):', id);
       } else {
         Cookies.set("userId", id, { secure: true, sameSite: "strict" }); // cookie de session
-        console.log('[AUTH] userId cookie set (session):', id);
       }
       setIdentifier(id);
-      console.log('[AUTH] setIdentifier called:', id);
     } else {
       // si ton back ne renvoie pas l'id, préfère une route /auth/me côté back
       // ou renvoie-le dans la réponse de login
-      console.warn('[AUTH] userId manquant dans la réponse de login');
       throw new Error("Identifiants invalides ou utilisateur non trouvé");
     }
   };
@@ -128,8 +117,7 @@ export const AuthProvider = ({ children }) => {
       // si tu as une route pour nettoyer les cookies côté serveur
       const uid = identifier || Cookies.get('userId');
       await api.post("/auth/logout", { userId: uid });
-    } catch (e) {
-      console.warn('[AUTH] logout error ignorée:', e?.response?.data || e.message);
+  } catch (e) {
     }
     setIdentifier(null);
     setUser(null);

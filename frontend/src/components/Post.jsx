@@ -1,16 +1,16 @@
 import ProfileCard from "./ProfileCard";
 import UserAvatar from "./UserAvatar";
 import LikeButton from "./LikeButton";
-import { likeBreeze, fetchUserProfile, setLikesCount } from "@/utils/api";
+import { likeBreeze, setLikesCount } from "@/utils/api";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/authcontext";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function Post({ post, link = true }) {
+export default function Post({ post, link = true, authorCache }) {
   const locale = useLocale();
-  const [author, setAuthor] = useState(null);
+  const [author, setAuthor] = useState(authorCache?.[post.author] || null);
   const [likesInput, setLikesInput] = useState(post.likes.length);
   const { user } = useAuth();
   const isLiked = user && post.likes && Array.isArray(post.likes) ? post.likes.includes(user.id) : false;
@@ -18,17 +18,10 @@ export default function Post({ post, link = true }) {
 
 
   useEffect(() => {
-    async function loadAuthor() {
-      try {
-        const authorProfile = await fetchUserProfile(post.author);
-        setAuthor(authorProfile);
-      } catch (error) {
-        console.error("Error fetching author profile:", error);
-        setAuthor("Unknown User");
-      }
+    if (!author && authorCache && authorCache[post.author]) {
+      setAuthor(authorCache[post.author]);
     }
-    loadAuthor();
-  }, [post.author]);
+  }, [authorCache, post.author, author]);
 
   // Fonction utilitaire pour transformer les # en liens
   function renderContentWithTags(content) {

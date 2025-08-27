@@ -60,7 +60,7 @@ module.exports = {
             return res.status(200).json({ message: 'Like removed', success: true });
 
         } catch (err) {
-            console.error(err);
+            
             return res.status(500).json({ message: 'Unable to unlike post', details: err.message });
         }
     },
@@ -124,7 +124,7 @@ module.exports = {
             return res.status(200).json({ message: 'Like removed', success: true });
 
         } catch (err) {
-            console.error(err);
+            
             return res.status(500).json({ message: 'Unable to unlike comment', details: err.message });
         }
     }

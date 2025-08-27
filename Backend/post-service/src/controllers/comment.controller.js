@@ -24,7 +24,7 @@ module.exports = {
 
   return res.status(200).json(Array.isArray(postComments) ? postComments : []);
     } catch (error) {
-      console.error("Error retrieving comments:", error);
+      
       return res
         .status(500)
         .json({ message: "Failed to retrieve comments", error: error.message });
@@ -72,14 +72,14 @@ module.exports = {
             }
           );
         } catch (notifyErr) {
-          console.error("Failed to notify post author:", notifyErr.message);
+          
           // ne bloque pas la suite
         }
       }
 
       return res.status(201).json(savedComment);
     } catch (error) {
-      console.error("Error in addCommentToPost:", error);
+      
       return res
         .status(500)
         .json({ message: "Internal server error", error: error.message });
@@ -112,7 +112,7 @@ module.exports = {
           return res.status(200).json(updatedComment);
         });
     } catch (error) {
-      console.error("Error updating comment:", error);
+      
       return res
         .status(500)
         .json({ message: "Internal server error", error: error.message });
@@ -140,7 +140,7 @@ module.exports = {
             .json({ message: "Comment deleted successfully" });
         });
     } catch (error) {
-      console.error("Error deleting comment:", error);
+      
       return res
         .status(500)
         .json({ message: "Internal server error", error: error.message });
@@ -165,7 +165,7 @@ module.exports = {
 
       return res.status(200).json(comments);
     } catch {
-      console.error("Error getting comment replies", error);
+      
       return res
         .status(500)
         .json({ message: "Internal server error", error: error.message });
@@ -190,7 +190,7 @@ module.exports = {
 
       return res.status(200).json({ repliesCount: comments.length });
     } catch {
-      console.error("Error getting comment replies count", error);
+      
       return res
         .status(500)
         .json({ message: "Internal server error", error: error.message });
@@ -246,16 +246,13 @@ module.exports = {
             }
           );
         } catch (notifyErr) {
-          console.error(
-            "Failed to send reply notification:",
-            notifyErr.message
-          );
+          // notification failure ignored
         }
       }
 
       return res.status(201).json(newReply);
     } catch (error) {
-      console.error("Error adding reply to comment:", error);
+      
       return res
         .status(500)
         .json({ message: "Internal server error", error: error.message });
@@ -286,7 +283,7 @@ module.exports = {
 
       return res.status(200).json(reply);
     } catch (error) {
-      console.error("Error updating reply:", error);
+      
       return res
         .status(500)
         .json({ message: "Internal server error", error: error.message });
@@ -314,7 +311,7 @@ module.exports = {
 
       return res.status(200).json({ message: "Reply successfully deleted" });
     } catch (error) {
-      console.error("Error deleting reply:", error);
+      
       return res
         .status(500)
         .json({ message: "Internal server error", error: error.message });

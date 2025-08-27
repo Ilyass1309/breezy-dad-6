@@ -25,16 +25,10 @@ app.use('/api/admin', adminRoutes);
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log("Connected to the database!");
-
     app.listen(port, () => {
-      console.log(`User service listening on port ${port}`);
       swaggerDocs(app, port);
-      console.log(
-        `Swagger docs available at http://localhost:${port}/user-service-docs`
-      );
     });
   })
   .catch((err) => {
-    console.error("Database connection error:", err);
+    // error suppressed
   });

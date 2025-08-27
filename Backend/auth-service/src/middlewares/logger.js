@@ -12,13 +12,13 @@ const logEvents = async (message, logFileName) => {
         await fsPromises.mkdir(path.join('/home', 'logs', 'auth-service'), { recursive: true });
         await fsPromises.appendFile(path.join('/home', 'logs', 'auth-service', logFileName), logItem);
     } catch (err) {
-        console.error('[logger] Error writing log:', err.message);
+        
     }
 }
 
 const logger = (req, res, next) => {
     logEvents(`${req.method}\t${req.headers.origin}\t${req.url}`, 'reqLog.txt');
-    console.log(`${req.method} ${req.path}`);
+    
 
     next();
 }

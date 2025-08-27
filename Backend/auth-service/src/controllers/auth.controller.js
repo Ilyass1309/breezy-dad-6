@@ -78,7 +78,7 @@ exports.refreshToken = async (req, res) => {
 
   return res.status(200).json({ ok: true, accessToken: newAccessToken });
   } catch (err) {
-    console.error("[REFRESH] Error:", err.message);
+  // log removed
     // 403 si token invalide/expiré
     return res.status(403).json({ message: "Invalid or expired refresh token" });
   }
@@ -146,12 +146,12 @@ exports.register = async (req, res) => {
     });
   } catch (err) {
     if (err.response) {
-      console.error("user-service responded with:", err.response.status, err.response.data);
+  // log removed
       return res.status(err.response.status).json({
         error: err.response.data.error || "user-service rejected the request",
       });
     } else {
-      console.error("user-service unreachable:", err.message);
+  // log removed
       return res.status(500).json({ error: "user-service unreachable" });
     }
   }
@@ -221,7 +221,7 @@ exports.login = async (req, res) => {
     if (err.response && err.response.status === 404) {
       return res.status(401).json({ message: "Invalid email/username or password" });
     }
-    console.error("[LOGIN] Error:", err.message);
+  // log removed
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -279,7 +279,7 @@ exports.logout = async (req, res) => {
 
     return res.status(200).json({ message: "Successfully logged out" });
   } catch (err) {
-    console.error("Logout error:", err.message);
+  // log removed
     return res.status(500).json({ message: "Logout failed" });
   }
 };

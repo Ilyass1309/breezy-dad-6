@@ -30,7 +30,7 @@ export default function CommentInput({ post_id, onAddComment }) {
         setError("Échec de l'ajout du commentaire.");
       }
     } catch (err) {
-      console.error("Erreur lors de l'envoi du commentaire :", err);
+      
       setError("Une erreur est survenue lors de l'envoie du commentaire.");
     } finally {
       setSending(false);

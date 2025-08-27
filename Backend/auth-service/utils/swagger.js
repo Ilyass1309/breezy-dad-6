@@ -28,7 +28,7 @@ function swaggerDocs(app, port) {
         res.send(swaggerSpec);
     });
 
-    console.log(`Swagger docs available at http://localhost:${port}/auth-service-docs`);
+    
 }
 
 module.exports = swaggerDocs;

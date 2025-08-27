@@ -38,7 +38,7 @@ export default function EditProfile({ open, onClose }) {
       }
       onClose(); // ferme la modale
     } catch (error) {
-      console.error("Failed to update profile:", error);
+      
       // Gérer l'erreur (affichage, etc.)
     }
   };

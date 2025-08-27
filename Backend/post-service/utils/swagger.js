@@ -66,7 +66,7 @@ function swaggerDocs(app, port) {
         res.send(swaggerSpec);
     });
 
-    console.log(`Swagger docs available at http://localhost:${port}/post-service-docs`);
+    
 }
 
 module.exports = swaggerDocs;

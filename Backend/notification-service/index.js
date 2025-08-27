@@ -18,12 +18,12 @@ app.use("/api/notifications", notificationRoutes);
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log("Connected to MongoDB for notification Service");
+  // log removed
 
     app.listen(port, () => {
-      console.log("Notification Service is running on port", port);
+  // log removed
     });
   })
   .catch((err) => {
-    console.error("Error connecting to MongoDB for Notification Service:", err);
+  // log removed
   });

@@ -83,8 +83,7 @@ export default function UserPage({ params }) {
         } else {
           setStatus("not-following");
         }
-      } catch (err) {
-        console.error("Error fetching following:", err);
+  } catch (err) {
       }
     }
     if (userProfile && user) {
@@ -101,8 +100,7 @@ export default function UserPage({ params }) {
         // Refresh profile to update counts
         const updatedProfile = await fetchUserProfile(username);
         setUserProfile(updatedProfile);
-      } catch (err) {
-        console.error("Error following user:", err);
+  } catch (err) {
       }
     } else if (status === "following" || status === "friends") {
       try {
@@ -110,8 +108,7 @@ export default function UserPage({ params }) {
         setStatus("not-following");
         const updatedProfile = await fetchUserProfile(username);
         setUserProfile(updatedProfile);
-      } catch (err) {
-        console.error("Error unfollowing user:", err);
+  } catch (err) {
       }
     }
   }

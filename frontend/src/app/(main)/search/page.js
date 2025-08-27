@@ -108,7 +108,7 @@ export default function SearchPage() {
         setUsers(usersProfiles);
       }
     } catch (err) {
-      console.error("Erreur lors de la recherche :", err);
+      
       setError("Failed to fetch search results");
     } finally {
       setLoading(false);

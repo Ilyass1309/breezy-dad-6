@@ -53,9 +53,7 @@ export async function loginUser(identifier, password) {
 // =====================
 
 export async function fetchUserProfile(identifier) {
-  console.log('[API] fetchUserProfile appelé avec identifier:', identifier);
   const res = await api.get(`/users/${identifier}`);
-  console.log('[API] fetchUserProfile réponse:', res.data);
   return res.data;
 }
 
@@ -77,6 +75,13 @@ export async function fetchUserFriends(userId) {
 export async function fetchUsersByUsername(query) {
   const res = await api.get(`/users/search`, { params: { query } });
   return res.data;
+}
+
+// Bulk minimal user info (id, username, avatar)
+export async function fetchUsersBulkMinimal(ids=[]) {
+  if (!Array.isArray(ids) || ids.length === 0) return [];
+  const res = await api.get(`/users/bulk`, { params: { ids: ids.join(',') } });
+  return res.data; // [{id, username, avatar}]
 }
 
 export async function followUser(targetUserId) {

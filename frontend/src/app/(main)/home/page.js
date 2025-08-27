@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/authcontext";
-import { fetchUserFeed, fetchFYP } from "@/utils/api";
+import { fetchUserFeed, fetchFYP, fetchUsersBulkMinimal } from "@/utils/api";
 import Feed from "@/components/Feed";
 import RightSidebar from "@/components/RightSidebar";
 import { useTranslations } from "next-intl";
@@ -16,6 +16,7 @@ export default function HomePage() {
   const [forYouPosts, setFYP] = useState([]);
   const [loadingFYP, setLoadingFYP] = useState(true);
   const [selectedTab, setSelectedTab] = useState("forYou");
+  const [authorCache, setAuthorCache] = useState({});
 
   useEffect(() => {
     async function loadPosts() {
@@ -23,9 +24,22 @@ export default function HomePage() {
       setLoadingFYP(true);
       try {
   const userFYP = await fetchFYP(accessToken);
-  setFYP(Array.isArray(userFYP) ? userFYP : []);
+  const fypArr = Array.isArray(userFYP) ? userFYP : [];
+  setFYP(fypArr);
   const userPosts = await fetchUserFeed(accessToken);
-  setPosts(Array.isArray(userPosts) ? userPosts : []);
+  const followArr = Array.isArray(userPosts) ? userPosts : [];
+  setPosts(followArr);
+  // build author cache minimal
+  const all = [...fypArr, ...followArr];
+  const uniqueIds = [...new Set(all.filter(p=>p && p.author).map(p=>p.author))];
+  if (uniqueIds.length) {
+    try {
+      const minimal = await fetchUsersBulkMinimal(uniqueIds);
+      const map = {};
+      minimal.forEach(u => { map[u.id] = u; });
+      setAuthorCache(map);
+    } catch {}
+  }
       } catch {
         setPosts([]);
         setFYP([]);
@@ -79,14 +93,14 @@ export default function HomePage() {
       {/* Contenu de l’onglet Home */}
       {selectedTab === "forYou" && (
         <section role="tabpanel" className="space-y-4">
-          <Feed posts={forYouPosts} loadingPosts={loadingFYP} />
+          <Feed posts={forYouPosts} loadingPosts={loadingFYP} authorCache={authorCache} />
         </section>
       )}
 
       {/* Contenu de l’onglet Profile */}
       {selectedTab === "follow" && (
         <section role="tabpanel" className="space-y-4">
-          <Feed posts={posts} loadingPosts={loadingPosts} />
+          <Feed posts={posts} loadingPosts={loadingPosts} authorCache={authorCache} />
         </section>
       )}
     </main>

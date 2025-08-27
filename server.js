@@ -45,10 +45,6 @@ app.use('*', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Breezy API Gateway running on port ${PORT}`);
-  console.log(`📊 Health check available at: http://localhost:${PORT}/health`);
-  console.log(`📋 API info available at: http://localhost:${PORT}/api`);
-});
+app.listen(PORT, () => {});
 
 module.exports = app;

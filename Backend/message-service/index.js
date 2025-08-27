@@ -31,16 +31,16 @@ app.use("/api/messages", messageRoutes);
 
 // Connexion WebSocket
 io.on("connection", (socket) => {
-  console.log("Nouvelle connexion WebSocket :", socket.id);
+  // log removed
 
   // Le client envoie son userId une fois connecté
   socket.on("join", (userId) => {
     socket.join(userId); // Le client rejoint une room privée
-    console.log(`User ${userId} a rejoint sa room.`);
+  // log removed
   });
 
   socket.on("disconnect", () => {
-    console.log("Déconnexion :", socket.id);
+  // log removed
   });
 });
 
@@ -50,13 +50,13 @@ const port = 3002;
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log("Connected to the database!");
+  // log removed
 
     server.listen(port, () => {
       // pas app.listen, mais server.listen
-      console.log(`Message service listening on port ${port}`);
+  // log removed
     });
   })
   .catch((err) => {
-    console.error("Database connection error:", err);
+  // log removed
   });

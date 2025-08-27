@@ -15,7 +15,7 @@ export default function PostPage({ params }) {
         const fetchedPost = await fetchPost(id);
         setPost(fetchedPost);
       } catch (error) {
-        console.error("Error fetching post:", error);
+        
       }
     }
     if (id) {

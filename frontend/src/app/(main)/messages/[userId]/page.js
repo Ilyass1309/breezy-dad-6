@@ -133,7 +133,7 @@ export default function ConversationPage() {
 
         // On récupère les messages de la conversation
       } catch (err) {
-        console.error("Failed to load conversation:", err);
+        // log removed
       } finally {
         setLoading(false);
       }
@@ -153,7 +153,7 @@ export default function ConversationPage() {
       await sendMessage(conversationId, text, accessToken);
       setNewMessage("");
     } catch (err) {
-      console.error("Envoi échoué :", err);
+      // log removed
     }
   }
 

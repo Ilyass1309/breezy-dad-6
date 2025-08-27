@@ -16,7 +16,7 @@ exports.getFollowers = async (req, res) => {
 
     return res.status(200).json({ followers: user.followers });
   } catch (error) {
-    console.error("Error in getFollowers:", error);
+    
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -36,7 +36,7 @@ exports.getFollowing = async (req, res) => {
 
     return res.status(200).json({ following: user.following });
   } catch (error) {
-    console.error("Error in getFollowing:", error);
+    
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -56,7 +56,7 @@ exports.getFriends = async (req, res) => {
 
     return res.status(200).json(mutualFriends);
   } catch (err) {
-    console.error("Error getting friends:", err);
+    
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -92,7 +92,29 @@ exports.getPublicUserInfo = async (req, res) => {
 
     return res.status(200).json(publicInfo);
   } catch (err) {
-    console.error("Error fetching public user info:", err);
+    
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// GET /api/users/bulk?ids=1,2,3
+exports.getUsersBulkMinimal = async (req, res) => {
+  const idsParam = req.query.ids;
+  if (!idsParam) {
+    return res.status(400).json({ message: 'ids query param required' });
+  }
+  const rawIds = idsParam.split(',').map(s => s.trim()).filter(Boolean);
+  const objectIds = rawIds.filter(id => mongoose.Types.ObjectId.isValid(id));
+  if (objectIds.length === 0) {
+    return res.status(200).json([]);
+  }
+  try {
+    const users = await User.find({ _id: { $in: objectIds } })
+      .select('username avatar _id')
+      .lean();
+    const mapped = users.map(u => ({ id: u._id, username: u.username, avatar: u.avatar }));
+    return res.status(200).json(mapped);
+  } catch (err) {
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };

@@ -8,19 +8,19 @@ import { postBreeze, fetchUserProfile } from "@/utils/api";
 async function uploadPostImage(file) {
   const formData = new FormData();
   formData.append("file", file);
-  console.log("[FRONT] Tentative d'upload image:", file);
+  // log removed
   const res = await fetch("https://post-service-tmsc.onrender.com/api/upload/upload_post_image", {
     method: "POST",
     body: formData,
   });
-  console.log("[FRONT] Réponse upload:", res.status, res.statusText);
+  // log removed
   if (!res.ok) {
     const errText = await res.text();
-    console.error("[FRONT] Erreur upload:", errText);
+  // log removed
     throw new Error("Erreur upload image: " + errText);
   }
   const data = await res.json();
-  console.log("[FRONT] Data Cloudinary:", data);
+  // log removed
   return data.url;
 }
 import UserAvatar from "@/components/UserAvatar";
@@ -76,7 +76,7 @@ export default function CreateBreathPage() {
       })
       .catch((error) => {
         setUploading(false);
-        console.error("Error posting breath:", error);
+  // log removed
         // Gérer l’erreur (afficher un message, etc.)
       });
   };

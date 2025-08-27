@@ -28,7 +28,7 @@ export default function LikeButton({
       setlikeCount(liked ? likeCount - 1 : likeCount + 1);
       setLiked(!liked);
     } catch (err) {
-      console.error(err);
+      
     } finally {
       setLoading(false);
     }

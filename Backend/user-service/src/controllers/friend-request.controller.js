@@ -11,10 +11,10 @@ exports.followUser = async (req, res) => {
     }
 
     try {
-        console.log('👉 [followUser] originalUrl:', req.originalUrl);
-        console.log('👉 [followUser] params:', req.params);
-        console.log('👉 [followUser] followerId:', followerId);
-        console.log('👉 [followUser] targetId:', targetId);
+    // log removed
+    // log removed
+    // log removed
+    // log removed
 
         const [follower, target] = await Promise.all([
             User.findById(followerId),
@@ -22,7 +22,7 @@ exports.followUser = async (req, res) => {
         ]);
 
         if (!follower || !target) {
-            console.log('❌ [followUser] Either follower or target user not found');
+            // log removed
             return res.status(404).json({ message: "User not found" });
         }
 
@@ -30,18 +30,18 @@ exports.followUser = async (req, res) => {
         if (!target.followers.includes(followerId)) {
             target.followers.push(followerId);
             await target.save();
-            console.log('✅ [followUser] Added follower to target');
+            // log removed
         }
 
         if (!follower.following.includes(targetId)) {
             follower.following.push(targetId);
             await follower.save();
-            console.log('✅ [followUser] Added target to follower');
+            // log removed
         }
 
         // Crée une notification via notification-service
         try {
-            console.log('📡 [followUser] Sending notification to notification-service...');
+            // log removed
             const notifServiceUrl = process.env.NOTIFICATION_SERVICE_URL;
             const notifResponse = await axios.post(
                 `${notifServiceUrl.replace(/\/$/, '')}/api/notifications`, {
@@ -51,19 +51,19 @@ exports.followUser = async (req, res) => {
                     link: `/profile/${followerId}`
                 }
             );
-            console.log('✅ [followUser] Notification response:', notifResponse.data);
+            // log removed
         } catch (notifyErr) {
-            console.error('❌ [followUser] Failed to send follow notification:', notifyErr.message);
+            // log removed
             if (notifyErr.response) {
-                console.error('🔍 Response data:', notifyErr.response.data);
-                console.error('🔍 Status code:', notifyErr.response.status);
+                // log removed
+                // log removed
             }
         }
 
         return res.status(200).json({ message: "Followed successfully" });
 
     } catch (err) {
-        console.error("❌ [followUser] Error during follow:", err);
+    // log removed
         return res.status(500).json({ message: "Internal server error" });
     }
 };
@@ -91,7 +91,7 @@ exports.unfollowUser = async (req, res) => {
 
         return res.status(200).json({ message: "User unfollowed successfully" });
     } catch (err) {
-        console.error("Error unfollowing user:", err);
+    // log removed
         return res.status(500).json({ message: "Internal server error" });
     }
 };

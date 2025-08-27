@@ -22,10 +22,10 @@ export default function HomePage() {
       setLoadingPosts(true);
       setLoadingFYP(true);
       try {
-        const userFYP = await fetchFYP(accessToken);
-        setFYP(userFYP || []);
-        const userPosts = await fetchUserFeed(accessToken);
-        setPosts(userPosts || []);
+  const userFYP = await fetchFYP(accessToken);
+  setFYP(Array.isArray(userFYP) ? userFYP : []);
+  const userPosts = await fetchUserFeed(accessToken);
+  setPosts(Array.isArray(userPosts) ? userPosts : []);
       } catch {
         setPosts([]);
         setFYP([]);

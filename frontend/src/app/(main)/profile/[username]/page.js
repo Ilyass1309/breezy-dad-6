@@ -51,8 +51,8 @@ export default function UserPage({ params }) {
       if (!userProfile) return;
       setLoadingPosts(true);
       try {
-        const userPosts = await fetchUserPosts(userProfile.id, accessToken);
-        setPosts(userPosts || []);
+  const userPosts = await fetchUserPosts(userProfile.id, accessToken);
+  setPosts(Array.isArray(userPosts) ? userPosts : []);
       } catch (err) {
         setPosts([]);
       }
@@ -246,7 +246,7 @@ export default function UserPage({ params }) {
         </div>
       </div>
       <hr className="border-t border-base-content/30 w-full" />
-      <Feed posts={posts} loadPosts={loadingPosts} />
+  <Feed posts={posts} loadingPosts={loadingPosts} />
     </div>
   );
 }

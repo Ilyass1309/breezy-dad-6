@@ -37,14 +37,17 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const run = async () => {
       if (!identifier) {
+        console.log('[AUTH] useEffect: Pas d\'identifier, utilisateur déconnecté');
         setUser(null);
         return;
       }
       try {
+        console.log('[AUTH] useEffect: fetchUserProfile appelé avec identifier:', identifier);
         const profile = await fetchUserProfile(identifier);
+        console.log('[AUTH] useEffect: fetchUserProfile réponse:', profile);
         setUser(profile);
       } catch (err) {
-        console.error("Error fetching user profile:", err);
+        console.error('[AUTH] useEffect: Erreur lors de la récupération du profil utilisateur:', err);
         setUser(null);
       }
     };
@@ -64,19 +67,25 @@ export const AuthProvider = ({ children }) => {
 
   // — Connexion
   const login = async (idOrEmail, password, rememberMe = false) => {
+    console.log('[AUTH] login() called with:', { idOrEmail, password, rememberMe });
     const data = await loginUser(idOrEmail, password);
+    console.log('[AUTH] loginUser response:', data);
     // le back POSE les cookies (access+refresh). Ici, on ne lit pas d'accessToken.
     const id = data?.userId;
     if (id) {
       if (rememberMe) {
         Cookies.set("userId", id, { secure: true, sameSite: "strict", expires: 7 });
+        console.log('[AUTH] userId cookie set (persistent):', id);
       } else {
         Cookies.set("userId", id, { secure: true, sameSite: "strict" }); // cookie de session
+        console.log('[AUTH] userId cookie set (session):', id);
       }
       setIdentifier(id);
+      console.log('[AUTH] setIdentifier called:', id);
     } else {
       // si ton back ne renvoie pas l'id, préfère une route /auth/me côté back
       // ou renvoie-le dans la réponse de login
+      console.warn('[AUTH] userId manquant dans la réponse de login');
       throw new Error("Identifiants invalides ou utilisateur non trouvé");
     }
   };

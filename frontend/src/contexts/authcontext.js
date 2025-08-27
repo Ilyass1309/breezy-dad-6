@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
     } else {
       // si ton back ne renvoie pas l'id, préfère une route /auth/me côté back
       // ou renvoie-le dans la réponse de login
-      console.warn("userId manquant dans la réponse de login");
+      throw new Error("Identifiants invalides ou utilisateur non trouvé");
     }
   };
 

@@ -5,6 +5,7 @@ const express = require("express");
 const { logger } = require("./src/middlewares/logger");
 const swaggerDocs = require("./utils/swagger");
 const cors = require("cors");
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const port = 3003;
@@ -12,6 +13,8 @@ const port = 3003;
 const corsOptions = require('./config/corsOptions');
 app.use(cors(corsOptions));
 app.use(express.json());
+// Parse cookies so verifyJWT can read accessToken
+app.use(cookieParser());
 app.use(logger);
 swaggerDocs(app, port);
 

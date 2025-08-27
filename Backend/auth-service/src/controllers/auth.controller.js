@@ -76,7 +76,7 @@ exports.refreshToken = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({ ok: true });
+  return res.status(200).json({ ok: true, accessToken: newAccessToken });
   } catch (err) {
     console.error("[REFRESH] Error:", err.message);
     // 403 si token invalide/expiré
@@ -214,7 +214,8 @@ exports.login = async (req, res) => {
 
     return res.status(200).json({
       message: "You are now connected!",
-      userId: user.id,
+  userId: user.id,
+  accessToken, // add token in body so frontend can set Authorization header manually
     });
   } catch (err) {
     if (err.response && err.response.status === 404) {

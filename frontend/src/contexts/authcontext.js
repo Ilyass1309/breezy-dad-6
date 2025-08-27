@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   const [identifier, setIdentifier] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [accessToken, setAccessToken] = useState(null);
 
 
 
@@ -19,7 +20,12 @@ export const AuthProvider = ({ children }) => {
     (async () => {
       try {
         // si refresh OK, le back repose un accessToken en cookie
-        await api.post("/auth/refresh-token", {});
+        const refreshResp = await api.post("/auth/refresh-token", {});
+        // Si à l'avenir le back renvoie aussi le token dans le body, on le capte
+        if (refreshResp?.data?.accessToken) {
+          setAccessToken(refreshResp.data.accessToken);
+          api.defaults.headers.common['Authorization'] = 'Bearer ' + refreshResp.data.accessToken;
+        }
         // récupère un identifiant d’utilisateur pour charger le profil
         // (si tu gardes un cookie non-HttpOnly "userId")
         const storedIdentifier = Cookies.get("userId") || null;
@@ -70,7 +76,12 @@ export const AuthProvider = ({ children }) => {
     console.log('[AUTH] login() called with:', { idOrEmail, password, rememberMe });
     const data = await loginUser(idOrEmail, password);
     console.log('[AUTH] loginUser response:', data);
-    // le back POSE les cookies (access+refresh). Ici, on ne lit pas d'accessToken.
+    // le back POSE les cookies (access+refresh) et maintenant renvoie aussi accessToken
+    if (data?.accessToken) {
+      setAccessToken(data.accessToken);
+      api.defaults.headers.common['Authorization'] = 'Bearer ' + data.accessToken;
+      console.log('[AUTH] Authorization header set globally');
+    }
     const id = data?.userId;
     if (id) {
       if (rememberMe) {
@@ -103,7 +114,7 @@ export const AuthProvider = ({ children }) => {
   const isAuthenticated = !!identifier; // auth basée sur presence d'un identifiant (ou utilise !!user)
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout, isAuthenticated, identifier }}>
+  <AuthContext.Provider value={{ user, loading, register, login, logout, isAuthenticated, identifier, accessToken }}>
       {children}
     </AuthContext.Provider>
   );

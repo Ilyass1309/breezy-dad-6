@@ -3,6 +3,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const express = require("express");
 const notificationRoutes = require("./src/routes/notification.routes");
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const cors = require("cors");
@@ -11,6 +12,7 @@ app.use(cors(corsOptions));
 const port = 3004;
 
 app.use(express.json());
+app.use(cookieParser());
 app.use("/api/notifications", notificationRoutes);
 
 mongoose

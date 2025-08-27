@@ -19,7 +19,10 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !original._retry) {
       original._retry = true;
       try {
-        await api.post("/auth/refresh-token", {}); 
+        const refreshResp = await api.post("/auth/refresh-token", {}); 
+        if (refreshResp?.data?.accessToken) {
+          api.defaults.headers.common['Authorization'] = 'Bearer ' + refreshResp.data.accessToken;
+        }
         return api(original);                       
       } catch (e) {
         logoutAPI?.(); 
@@ -66,10 +69,8 @@ export async function fetchUserFollowers(userId) {
   return res.data;
 }
 
-export async function fetchUserFriends(userId, token) {
-  const res = await api.get(`/users/${userId}/friends`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export async function fetchUserFriends(userId) {
+  const res = await api.get(`/users/${userId}/friends`);
   return res.data;
 }
 
@@ -88,12 +89,8 @@ export async function unfollowUser(targetUserId) {
   return res.data;
 }
 
-export async function updateUserProfile(bio, avatar, token) {
-  const res = await api.patch(
-    `/users/`,
-    { bio, avatar },
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+export async function updateUserProfile(bio, avatar) {
+  const res = await api.patch(`/users/`, { bio, avatar });
   return res.data;
 }
 
@@ -128,11 +125,11 @@ export async function postBreeze(text, tags, imageUrl) {
   return res.data;
 }
 
-export async function likeBreeze(setLiked, postID, token) {
+export async function likeBreeze(setLiked, postID) {
   const path = setLiked
     ? `/posts/likes/posts/${postID}/like`
     : `/posts/likes/posts/${postID}/unlike`;
-  const res = await api.post(path, {}, { headers: { Authorization: `Bearer ${token}` } });
+  const res = await api.post(path, {});
   return res.data;
 }
 
@@ -220,45 +217,31 @@ export async function editMessage(messageId, content) {
   return res.data;
 }
 
-export async function markConversationAsRead(userId, token) {
-  return api.post(
-    `/messages/conversations/${userId}/read`,
-    {},
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+export async function markConversationAsRead(userId) {
+  return api.post(`/messages/conversations/${userId}/read`, {});
 }
 
 // =====================
 //   NOTIFICATIONS
 // =====================
 
-export async function fetchNotifications(token) {
-  const res = await api.get(`/notifications`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export async function fetchNotifications() {
+  const res = await api.get(`/notifications`);
   return res.data;
 }
 
-export async function getNotificationCount(token) {
-  const res = await api.get(`/notifications/count`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export async function getNotificationCount() {
+  const res = await api.get(`/notifications/count`);
   return res.data;
 }
 
-export async function readAndUpdateNotification(notificationId, token) {
-  const res = await api.patch(
-    `/notifications/${notificationId}`,
-    {},
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+export async function readAndUpdateNotification(notificationId) {
+  const res = await api.patch(`/notifications/${notificationId}`, {});
   return res.data;
 }
 
-export async function readAndDeleteNotification(notificationId, token) {
-  const res = await api.delete(`/notifications/${notificationId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export async function readAndDeleteNotification(notificationId) {
+  const res = await api.delete(`/notifications/${notificationId}`);
   return res.data;
 }
 

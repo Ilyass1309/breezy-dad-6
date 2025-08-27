@@ -7,6 +7,7 @@ const userAuthRoutes = require("./src/routes/user-auth.routes");
 const userFollowRoutes = require("./src/routes/user-follow.routes");
 const friendRequestRoutes = require("./src/routes/friend-request.routes");
 const adminRoutes = require('./src/routes/admin.routes');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const corsOptions = require('./config/corsOptions');
@@ -15,6 +16,7 @@ app.use(cors(corsOptions));
 const port = 3001;
 
 app.use(express.json());
+app.use(cookieParser());
 app.use("/api/users", userAuthRoutes);
 app.use("/api/users", userFollowRoutes);
 app.use("/api/friend-requests", friendRequestRoutes);

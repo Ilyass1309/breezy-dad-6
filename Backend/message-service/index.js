@@ -7,6 +7,7 @@ require("dotenv").config();
 
 const cors = require("cors");
 const corsOptions = require("./config/corsOptions");
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const server = http.createServer(app); //serveur HTTP à partir de Express
@@ -20,6 +21,7 @@ const io = new Server(server, {
 // Middleware pour autoriser les CORS normaux
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
 
 // Injecte l'objet io dans la requête (pour usage dans les contrôleurs)
 app.set("io", io);

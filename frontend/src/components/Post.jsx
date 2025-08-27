@@ -96,16 +96,17 @@ export default function Post({ post, link = true, authorCache }) {
       <div>
         <p>{renderContentWithTags(post.content)}</p>
         {post.mediaUrls && post.mediaUrls.length > 0 && (
-          <div className="flex justify-center items-center mt-4">
+          <div className="flex flex-col gap-4 mt-4">
             {post.mediaUrls.map((url, index) => (
-              <div key={index} className="w-full max-w-xl h-[22rem] flex items-center justify-center bg-base-100">
+              <figure key={index} className="w-full max-w-xl mx-auto overflow-hidden rounded-xl">
                 <img
                   src={url}
                   alt={`Post image ${index + 1}`}
-                  className="object-contain w-full h-[22rem]"
-                  style={{ maxWidth: '100%', maxHeight: '22rem', objectFit: 'contain', background: 'white' }}
+                  loading="lazy"
+                  className="w-full h-auto block select-none"
+                  style={{ objectFit: 'contain' }}
                 />
-              </div>
+              </figure>
             ))}
           </div>
         )}

@@ -26,11 +26,12 @@ export default function LoginForm() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
 
     try {
       await login(identifier, password, rememberMe);
+      console.log('[LOGIN] Avant router.push', searchParams.get("from") || "/home");
       router.push(searchParams.get("from") || "/home");
+      console.log('[LOGIN] Après router.push');
     } catch (error) {
       setError(error.message || "auth failed");
     } finally {

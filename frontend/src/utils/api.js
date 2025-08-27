@@ -19,20 +19,15 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !original._retry) {
       original._retry = true;
       try {
-        const { data } = await api.post("/auth/refresh-token", {});
-        const newAccess = data?.accessToken;
-        if (newAccess) {
-          original.headers = original.headers || {};
-          original.headers.Authorization = `Bearer ${newAccess}`;
-          return api(original);
-        }
+        await api.post("/auth/refresh-token", {}); 
+        return api(original);                       
       } catch (e) {
-  // setAccessToken(null); // removed legacy call
+        logoutAPI?.(); 
         if (typeof window !== "undefined") window.location.href = "/";
-        return Promise.reject(e);
+        throw e;
       }
     }
-    return Promise.reject(error);
+    throw error;
   }
 );
 

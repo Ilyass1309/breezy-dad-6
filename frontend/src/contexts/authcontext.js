@@ -100,8 +100,10 @@ export const AuthProvider = ({ children }) => {
     Cookies.remove("userId");
   };
 
+  const isAuthenticated = !!identifier; // auth basée sur presence d'un identifiant (ou utilise !!user)
+
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, register, login, logout, isAuthenticated, identifier }}>
       {children}
     </AuthContext.Provider>
   );

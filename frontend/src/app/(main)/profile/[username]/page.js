@@ -248,7 +248,7 @@ export default function UserPage({ params }) {
         </div>
       </div>
       <hr className="border-t border-base-content/30 w-full" />
-  <Feed posts={posts} loadingPosts={loadingPosts} />
+  <Feed posts={posts} loadingPosts={loadingPosts} enablePagination={false} />
     </div>
   );
 }

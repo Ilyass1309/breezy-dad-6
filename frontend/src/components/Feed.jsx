@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState, useEffect, useMemo } from "react";
 import { fetchFYPWithPagination, fetchUsersBulkMinimal } from "@/utils/api";
 
-export default function Feed({ posts: initialPosts = [], loadingPosts: initialLoading = false }) {
+export default function Feed({ posts: initialPosts = [], loadingPosts: initialLoading = false, enablePagination = true }) {
   const t = useTranslations("Feed");
   const PAGE_SIZE = 8;
   const [posts, setPosts] = useState(Array.isArray(initialPosts) ? initialPosts : []);
@@ -15,10 +15,20 @@ export default function Feed({ posts: initialPosts = [], loadingPosts: initialLo
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
-  setPosts(Array.isArray(initialPosts) ? initialPosts : []);
+    setPosts(Array.isArray(initialPosts) ? initialPosts : []);
     setPage(1);
-    setHasMore(true);
-  }, [initialPosts]);
+    // If pagination disabled, no more pages
+    setHasMore(enablePagination);
+  }, [initialPosts, enablePagination]);
+
+  // Sync internal loading with prop changes
+  useEffect(() => {
+    setLoading(initialLoading);
+    if (!initialLoading && !enablePagination) {
+      // once loaded in non-paginated mode, ensure no spinner
+      setHasMore(false);
+    }
+  }, [initialLoading, enablePagination]);
 
   const hydrateAuthors = async (allPosts) => {
     const missing = [];
@@ -43,6 +53,7 @@ export default function Feed({ posts: initialPosts = [], loadingPosts: initialLo
   }, [posts]);
 
   const loadMore = async () => {
+    if (!enablePagination) return;
     setLoading(true);
     const nextPage = page + 1;
     try {
@@ -71,12 +82,12 @@ export default function Feed({ posts: initialPosts = [], loadingPosts: initialLo
   return (
     <div className="flex flex-col w-full gap-4">
   {safePosts.map((post) => <Post key={post._id} post={post} authorCache={authorCache} />)}
-      {loading && (
+  {loading && (
         <div className="flex justify-center my-4">
           <span className="loading loading-spinner loading-lg text-primary"></span>
         </div>
       )}
-      {!loading && hasMore && (
+  {!loading && hasMore && enablePagination && (
         <button
           className="btn btn-outline btn-primary mx-auto my-4"
           onClick={loadMore}

@@ -75,7 +75,8 @@
   },
   "Feed": {
     "loading": "Feed wird geladen...",
-    "noPosts": "Keine Beiträge gefunden"
+    "noPosts": "Keine Beiträge gefunden",
+    "loadMore": "Mehr laden"
   },
   "profileCard": {
     "userNotFound": "Benutzer nicht gefunden",

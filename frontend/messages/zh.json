@@ -68,7 +68,8 @@
   },
   "Feed": {
     "loading": "正在加载动态...",
-    "noPosts": "未找到帖子"
+    "noPosts": "未找到帖子",
+    "loadMore": "加载更多"
   },
   "profileCard": {
     "userNotFound": "未找到用户",

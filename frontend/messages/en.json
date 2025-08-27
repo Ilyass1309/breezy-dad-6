@@ -78,7 +78,8 @@
   },
   "Feed": {
     "loading": "Loading feed...",
-    "noPosts": "No posts found"
+  "noPosts": "No posts found",
+  "loadMore": "Load more"
   },
   "profileCard": {
     "userNotFound": "User not found",

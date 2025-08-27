@@ -120,7 +120,8 @@
   },
   "Feed": {
     "loading": "Chargement du fil d'actualité...",
-    "noPosts": "Aucun post trouvé"
+    "noPosts": "Aucun post trouvé",
+    "loadMore": "Charger plus"
   },
   "profileCard": {
     "userNotFound": "Utilisateur non trouvé",

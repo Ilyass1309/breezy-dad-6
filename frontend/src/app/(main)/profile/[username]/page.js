@@ -20,7 +20,7 @@ import Feed from "@/components/Feed";
 export default function UserPage({ params }) {
   const t = useTranslations("Profile");
   const locale = useLocale();
-  const { user, accessToken } = useAuth();
+  const { user, accessToken, isAuthenticated } = useAuth();
   // Utilisez React.use() pour obtenir les params
   const { username } = use(params);
   const [userProfile, setUserProfile] = useState(null);
@@ -63,6 +63,7 @@ export default function UserPage({ params }) {
 
   useEffect(() => {
     async function loadStatus() {
+      if (!user || !userProfile) return; // guard if logout in progress
       try {
         const followings = await fetchUserFollowing(user.id);
         const friends = await fetchUserFriends(user.id, accessToken);
@@ -75,9 +76,9 @@ export default function UserPage({ params }) {
         } else if (Array.isArray(followings?.data)) {
           list = followings.data;
         }
-        if (friends.some((friend) => friend === userProfile.id)) {
+        if (Array.isArray(friends) && friends.some((friend) => friend === userProfile.id)) {
           setStatus("friends");
-        } else if (list.some((user) => user._id === userProfile.id)) {
+        } else if (list.some((u) => u._id === userProfile.id)) {
           setStatus("following");
         } else {
           setStatus("not-following");
@@ -86,12 +87,13 @@ export default function UserPage({ params }) {
         console.error("Error fetching following:", err);
       }
     }
-    if (userProfile) {
+    if (userProfile && user) {
       loadStatus();
     }
-  }, [userProfile]);
+  }, [userProfile, user]);
 
   async function handleActionButtonClick() {
+    if (!userProfile) return;
     if (status === "not-following") {
       try {
         await followUser(userProfile.id, accessToken);
@@ -119,7 +121,7 @@ export default function UserPage({ params }) {
   }
   let actionButton = null;
   switch (true) {
-    case userProfile.id === user.id:
+    case !!userProfile && !!user && userProfile.id === user.id:
       actionButton = (
         <button
           type="button"
@@ -182,6 +184,9 @@ export default function UserPage({ params }) {
     default:
       actionButton = null;
   }
+
+  // Si on n'est plus authentifié (logout déclenché), ne rien rendre (layout gère la redirection)
+  if (!isAuthenticated) return null;
 
   return (
     <div className="flex flex-col items-center max-sm:p-6 p-8 gap-4">

@@ -34,6 +34,14 @@ export default function Feed({ posts: initialPosts = [], loadingPosts: initialLo
     } catch {}
   };
 
+  // Hydrate authors for initial / changed posts
+  useEffect(() => {
+    if (posts.length) {
+      hydrateAuthors(posts);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [posts]);
+
   const loadMore = async () => {
     setLoading(true);
     const nextPage = page + 1;

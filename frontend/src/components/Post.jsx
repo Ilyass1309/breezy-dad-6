@@ -1,7 +1,7 @@
 import ProfileCard from "./ProfileCard";
 import UserAvatar from "./UserAvatar";
 import LikeButton from "./LikeButton";
-import { likeBreeze, setLikesCount } from "@/utils/api";
+import { likeBreeze, setLikesCount, fetchUserProfile } from "@/utils/api";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/authcontext";
 import { useLocale } from "next-intl";
@@ -20,7 +20,19 @@ export default function Post({ post, link = true, authorCache }) {
   useEffect(() => {
     if (!author && authorCache && authorCache[post.author]) {
       setAuthor(authorCache[post.author]);
+      return;
     }
+    // Fallback: if cache not yet loaded, attempt single fetch (avoids empty username)
+    let cancelled = false;
+    if (!author && post.author) {
+      (async () => {
+        try {
+          const full = await fetchUserProfile(post.author);
+          if (!cancelled) setAuthor(full);
+        } catch {}
+      })();
+    }
+    return () => { cancelled = true; };
   }, [authorCache, post.author, author]);
 
   // Fonction utilitaire pour transformer les # en liens

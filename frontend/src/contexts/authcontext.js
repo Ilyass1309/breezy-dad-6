@@ -23,8 +23,17 @@ export const AuthProvider = ({ children }) => {
         const refreshResp = await api.post("/auth/refresh-token", {});
         // Si à l'avenir le back renvoie aussi le token dans le body, on le capte
         if (refreshResp?.data?.accessToken) {
-          setAccessToken(refreshResp.data.accessToken);
-          api.defaults.headers.common['Authorization'] = 'Bearer ' + refreshResp.data.accessToken;
+          const token = refreshResp.data.accessToken;
+            setAccessToken(token);
+            api.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+            // Si aucun identifier (cookie manquant) on tente de le récupérer du token
+            if (!Cookies.get('userId')) {
+              const payload = safeDecodeJwt(token);
+              if (payload?.userId) {
+                Cookies.set('userId', payload.userId, { secure: true, sameSite: 'strict', expires: 7 });
+                setIdentifier(payload.userId);
+              }
+            }
         }
         // récupère un identifiant d’utilisateur pour charger le profil
         // (si tu gardes un cookie non-HttpOnly "userId")
@@ -78,9 +87,17 @@ export const AuthProvider = ({ children }) => {
     console.log('[AUTH] loginUser response:', data);
     // le back POSE les cookies (access+refresh) et maintenant renvoie aussi accessToken
     if (data?.accessToken) {
-      setAccessToken(data.accessToken);
-      api.defaults.headers.common['Authorization'] = 'Bearer ' + data.accessToken;
+      const token = data.accessToken;
+      setAccessToken(token);
+      api.defaults.headers.common['Authorization'] = 'Bearer ' + token;
       console.log('[AUTH] Authorization header set globally');
+      if (!identifier) {
+        const payload = safeDecodeJwt(token);
+        if (payload?.userId) {
+          Cookies.set('userId', payload.userId, { secure: true, sameSite: rememberMe ? 'strict' : 'strict', expires: rememberMe ? 7 : undefined });
+          setIdentifier(payload.userId);
+        }
+      }
     }
     const id = data?.userId;
     if (id) {
@@ -111,7 +128,18 @@ export const AuthProvider = ({ children }) => {
     Cookies.remove("userId");
   };
 
-  const isAuthenticated = !!identifier; // auth basée sur presence d'un identifiant (ou utilise !!user)
+  const isAuthenticated = !!(identifier || accessToken); // plus robuste: token OU identifier
+
+  // Utilitaire local pour décoder un JWT sans lib externe
+  function safeDecodeJwt(token) {
+    try {
+      const base64 = token.split('.')[1];
+      const json = atob(base64.replace(/-/g, '+').replace(/_/g, '/'));
+      return JSON.parse(json);
+    } catch {
+      return null;
+    }
+  }
 
   return (
   <AuthContext.Provider value={{ user, loading, register, login, logout, isAuthenticated, identifier, accessToken }}>

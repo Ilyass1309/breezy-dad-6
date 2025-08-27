@@ -4,12 +4,16 @@ const axios = require('axios');
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 
 const verifyJWT = async (req, res, next) => {
-  const authHeader = req.headers['authorization'];
+  let authHeader = req.headers['authorization'];
+  if (!authHeader && req.cookies?.accessToken) {
+    authHeader = 'Bearer ' + req.cookies.accessToken;
+    console.log('[verifyJWT] Token récupéré depuis cookie accessToken');
+  }
 
-  console.log('[verifyJWT] Authorization header:', authHeader);
+  console.log('[verifyJWT] Authorization header (final):', authHeader);
 
   if (!authHeader) {
-    console.warn('[verifyJWT] Authorization header missing');
+    console.warn('[verifyJWT] Aucun token trouvé (ni header ni cookie)');
     return res.status(401).json({ message: 'Authorization header missing' });
   }
 

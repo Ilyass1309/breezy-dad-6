@@ -64,6 +64,11 @@ export const AuthProvider = ({ children }) => {
       } catch (err) {
         console.error('[AUTH] useEffect: Erreur lors de la récupération du profil utilisateur:', err);
         setUser(null);
+        const status = err?.response?.status;
+        if (status === 401 || status === 404) {
+          // utilisateur inexistant ou non autorisé => purge locale
+          await logout();
+        }
       }
     };
     run();
@@ -121,11 +126,17 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       // si tu as une route pour nettoyer les cookies côté serveur
-      await api.post("/auth/logout", {});
-    } catch {}
+      const uid = identifier || Cookies.get('userId');
+      await api.post("/auth/logout", { userId: uid });
+    } catch (e) {
+      console.warn('[AUTH] logout error ignorée:', e?.response?.data || e.message);
+    }
     setIdentifier(null);
     setUser(null);
     Cookies.remove("userId");
+    if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+      window.location.href = '/';
+    }
   };
 
   const isAuthenticated = !!(identifier || accessToken); // plus robuste: token OU identifier

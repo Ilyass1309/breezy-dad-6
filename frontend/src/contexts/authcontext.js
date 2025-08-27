@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { registerUser, loginUser, fetchUserProfile } from "@/utils/api";
 import { api } from "@/utils/api"; // axios { baseURL:'/api', withCredentials:true }
 import Cookies from "js-cookie";
-import { bindLogout } from "@/utils/api";
+
 
 const AuthContext = createContext();
 
@@ -12,9 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    bindLogout(logout);
-  }, []);
+
 
   // Au montage : tenter un refresh (le cookie refreshToken HttpOnly sera envoyé automatiquement)
   useEffect(() => {

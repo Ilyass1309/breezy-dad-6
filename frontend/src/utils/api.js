@@ -22,13 +22,12 @@ api.interceptors.response.use(
         const { data } = await api.post("/auth/refresh-token", {});
         const newAccess = data?.accessToken;
         if (newAccess) {
-          setAccessToken(newAccess);
           original.headers = original.headers || {};
           original.headers.Authorization = `Bearer ${newAccess}`;
           return api(original);
         }
       } catch (e) {
-        setAccessToken(null);
+  // setAccessToken(null); // removed legacy call
         if (typeof window !== "undefined") window.location.href = "/";
         return Promise.reject(e);
       }

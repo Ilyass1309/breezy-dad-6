@@ -16,6 +16,8 @@ app.use(express.json());
 // Parse cookies so verifyJWT can read accessToken
 app.use(cookieParser());
 app.use(logger);
+// Health routes
+app.use('/', require('./src/routes/health.routes'));
 swaggerDocs(app, port);
 
 mongoose

@@ -13,6 +13,8 @@ const port = 3004;
 
 app.use(express.json());
 app.use(cookieParser());
+// Health routes
+app.use('/', require('./src/routes/health.routes'));
 app.use("/api/notifications", notificationRoutes);
 
 mongoose

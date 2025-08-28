@@ -21,12 +21,13 @@ app.use(cookieParser());
 
 app.use(cors(corsOptions));
 
-// --- Routes ---
+// --- Health & Warmup Routes ---
+app.use('/', require('./src/routes/health.routes'));
+
+// --- Business Routes ---
 const authRoutes = require("./src/routes/auth.routes");
 app.use("/api/auth", authRoutes);
 
-// Health simple
-app.get("/api/health", (req, res) => res.status(200).send("OK"));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

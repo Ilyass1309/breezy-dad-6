@@ -22,6 +22,8 @@ const io = new Server(server, {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
+// Health routes
+app.use('/', require('./src/routes/health.routes'));
 
 // Injecte l'objet io dans la requête (pour usage dans les contrôleurs)
 app.set("io", io);

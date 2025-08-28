@@ -17,6 +17,8 @@ const port = 3001;
 
 app.use(express.json());
 app.use(cookieParser());
+// Health routes
+app.use('/', require('./src/routes/health.routes'));
 app.use("/api/users", userAuthRoutes);
 app.use("/api/users", userFollowRoutes);
 app.use("/api/friend-requests", friendRequestRoutes);
